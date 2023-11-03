@@ -75,13 +75,13 @@ export default class GameScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
   }
 
-
-  // jump() {
-  //   if (this.player && this.player.body && this.player.body.touching.down) {
-  //     this.player.setVelocityY(-330);
-  //   }
-  //   console.log("Jump up")
-  // }
+// d
+  jump() {
+    if (this.player && this.player.body && this.player.body.touching.down) {
+      this.player.setVelocityY(-330);
+    }
+    console.log("Jump up")
+  }
 
   update() {
     if (this.gameOver) {
