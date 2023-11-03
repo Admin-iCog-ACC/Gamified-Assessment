@@ -75,30 +75,29 @@ export default class GameScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
   }
 
+
+  jump() {
+    if (this.player && this.player.body && this.player.body.touching.down) {
+      this.player.setVelocityY(-330);
+    }
+    console.log("Jump up")
+  }
+
   update() {
     if (this.gameOver) {
       return;
     }
 
-  //   // User input update
-  //   if (this.userInput.length > 0) {
-  //     this.handleUserInput(this.userInput);
-  //     this.userInput = []; // Clear the user input after handling
-  //   }
-  // }
+    if (jumpFlag) {
+      this.jump();
+      
+      // Update interface (example: log the jump action)
+      console.log("Player jumped!");
 
-  // handleUserInput(inputs) {
-  //   for (let i = 0; i < inputs.length; i++) {
-  //     const input = inputs[i];
-
-  //     if (input === "moveLeft") {
-  //       this.moveLeft();
-  //     } else if (input === "moveRight") {
-  //       this.moveRight();
-  //     } else if (input === "jump") {
-  //       this.jump();
-  //     }
-  //   }
+      jumpFlag = false; // Reset the jump flag
+    }
+    
+    
 
     if (this.cursors.left.isDown) {
       this.player.setVelocityX(-160);
@@ -133,10 +132,11 @@ export default class GameScene extends Phaser.Scene {
     this.player.anims.play("right", true);
   }
 
-  // Jump function
-  jump() {
-    this.player.setVelocityY(-330);
-  }
+  // // Jump function
+  // jump() {
+  //   this.player.setVelocityY(-330);
+  //   console.log("jumpping")
+  // }
 
   // Creating the Ground Platform
   createPlatforms() {
