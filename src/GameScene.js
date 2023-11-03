@@ -76,26 +76,26 @@ export default class GameScene extends Phaser.Scene {
   }
 
 
-  jump() {
-    if (this.player && this.player.body && this.player.body.touching.down) {
-      this.player.setVelocityY(-330);
-    }
-    console.log("Jump up")
-  }
+  // jump() {
+  //   if (this.player && this.player.body && this.player.body.touching.down) {
+  //     this.player.setVelocityY(-330);
+  //   }
+  //   console.log("Jump up")
+  // }
 
   update() {
     if (this.gameOver) {
       return;
     }
 
-    if (jumpFlag) {
-      this.jump();
+    // if () {
+    //   this.jump();
       
-      // Update interface (example: log the jump action)
-      console.log("Player jumped!");
+    //   // Update interface (example: log the jump action)
+    //   console.log("Player jumped!");
 
-      jumpFlag = false; // Reset the jump flag
-    }
+    //   jumpFlag = false; // Reset the jump flag
+    // }
     
     
 
