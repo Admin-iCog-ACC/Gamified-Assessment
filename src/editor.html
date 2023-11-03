@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Example website</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/theme/dracula.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/codemirror.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/mode/xml/xml.js"></script>
+    <script src="codeeditor.js"></script>
+    <style type="text/css">
+      body {
+        box-shadow: 0 0 50px #eee;
+        padding: 20px;
+        background: #fff;
+      }
+
+      .CodeMirror {
+        height: 65%; /* Adjust the height as needed */
+        width: 20%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        border: 1px solid #ccc;
+        font-size: 14px;
+      }
+
+      html {
+        background: #fafafa;
+      }
+    </style>
+  </head>
+  <body>
+    <script>createTextEditorPage()</script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <title>My Web Page</title>
+    <script src="script.js"></script>
+  </head>
+  <body>
+
+    <script> createHeading();</script>
+  </body>
+</html> -->
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Example website</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/theme/dracula.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/codemirror.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/mode/xml/xml.js"></script>
+    <script src="./GameScene.js">  </script>
+    <style type="text/css">
+      body {
+        box-shadow: 0 0 50px #eee;
+        padding: 20px;
+        background: #fff;
+      }
+
+      .CodeMirror {
+        height: 65%; /* Adjust the height as needed */
+        width: 20%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        border: 1px solid #ccc;
+        font-size: 14px;
+      }
+
+      html {
+        background: #fafafa;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>TEXT EDITOR</h1>
+    <textarea id="editor" name="editor"></textarea>
+    <button
+      onclick="runCode()"
+      style="
+        width: 7rem;
+        position: absolute;
+        bottom: 0;
+        margin-bottom: 3rem;
+        right: 0;
+        height: 2rem;
+        margin-top: 2rem;
+      "
+    >
+      Run Code
+    </button>
+
+    <script>
+      var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+        mode: "xml",
+        theme: "dracula",
+        lineNumbers: true,
+      });
+
+      function runCode() {
+        const code = editor.getValue();
+        // console.log(code);
+        const lines = code.split("\n"); // Split the code into an array of lines using '\n' as the delimiter
+        console.log(lines); // Log the array of lines to the console
+        // processMovement(lines)
+      }
+    </script>
+  </body>
+</html> -->
