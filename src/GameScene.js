@@ -21,6 +21,14 @@ export default class GameScene extends Phaser.Scene {
     this.bombSpawner = undefined;
     this.stars = undefined;
     this.gameOver = false;
+    this.jumpFlag = false;
+    this.key = "";
+    this.initialJumpFlag = false;
+    
+    this.delayTimer = null; // Timer for delaying the automatic update
+    this.delayDuration = 2000; // Delay duration in milliseconds
+
+    // test=this.test = 0;
   }
 
   preload() {
@@ -36,6 +44,8 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
+    this.game.loop.update = this.customUpdate;
+
     this.add.image(400, 300, "sky");
     this.add.image(400, 300, "star");
 
@@ -75,31 +85,153 @@ export default class GameScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
   }
 
-// d
-  jump() {
+  // d
+
+  moveRight(lines) {
     if (this.player && this.player.body && this.player.body.touching.down) {
-      this.player.setVelocityY(-330);
+      return this.player.setVelocityY(-330);
     }
-    console.log("Jump up")
+
+    console.log("Moving Right");
+
+    console.log(lines);
+    // this.jumpFlag = false;
   }
 
-  update() {
+  jump() {
+    if (this.player && this.player.body && this.player.body.touching.down) {
+      return this.player.setVelocityY(-330);
+    }
+
+    console.log("Jump up");
+
+    // console.log(lines);
+    // this.jumpFlag = false;
+  }
+
+  retriver() {
+    // Retrieve the data from the local storage
+    const retrievedDataString = localStorage.getItem("myinput");
+
+    // Convert the string back to an array
+    const retrievedDataArray = JSON.parse(retrievedDataString);
+
+    console.log(retrievedDataArray); // Output: ["apple", "banana", "orange"]
+
+    console.log("Retriver Worked sucessfully");
+  }
+
+  // New implementation
+  // handleStorageChange() {
+  //   if (localStorage.key === "myinput") {
+  //     // Code to execute when the "myinput" key in the local storage changes
+
+  //     const retrievedDataString = localStorage.getItem("myinput");
+  //     const retrievedDataArray = JSON.parse(retrievedDataString);
+  //     console.log(retrievedDataArray);
+  //     console.log("got u");
+
+  //     for (let i = 0; i < retrievedDataArray.length; i++) {
+  //       if (retrievedDataArray[i] === "jump") {
+  //         if (this.player.body.touching.down) {
+  //           this.player.setVelocityY(-330);
+  //         }
+  //       } else if (retrievedDataArray[i] === "moveLeft") {
+  //         this.player.setVelocityX(-160);
+  //         console.log("Executing Move left");
+  //         this.player.anims.play("left", true);
+  //       } else if (retrievedDataArray[i] === "moveRight") {
+  //         this.player.setVelocityX(160);
+  //         this.player.anims.play("right", true);
+  //       } else {
+  //         console.log("Error Code, Please Insert a correct method");
+  //       }
+  //     }
+  //   }
+  // }
+
+  clikedRun() {
+    console.log("Click Event working");
+  }
+
+  // customUpdate(scene, arg1) {
+  //     this.jump(arg1)
+  //   // In this example, it will print "Hello, Phaser!" in the console
+  // }
+
+  // jump(jumpFlag) {
+  //   if (
+  //     !(this.jumpFlag) &&
+  //     this.player &&
+  //     this.player.body &&
+  //     this.player.body.touching.down
+  //   ) {
+  //     return this.player.setVelocityY(-330);
+  //   }
+
+  //   console.log("Jump up");
+  // }
+
+  // jump(jumpFlag) {
+  //   console.log("hi")
+  //   if (jumpFlag && this.player && this.player.body && this.player.body.touching.down) {
+  //     this.player.setVelocityY(-330);
+  //     jumpFlag = false
+  //   }
+  //   else{
+  //     this.player.setVelocityY(0)
+  //   }
+
+  // }
+
+  jump(jumpFlag) {
+    if (
+      jumpFlag &&
+      this.player &&
+      this.player.body &&
+      this.player.body.touching &&
+      this.player.body.touching.down
+    ) {
+      this.player.setVelocityY(-330);
+      // this.stopJump(); // Call stopJump() after the jump action
+    }
+  }
+
+  stopJump(){
+    this.player.setVelocityY(0);
+  }
+
+  update(time, delta) {
     if (this.gameOver) {
       return;
     }
 
-    // if () {
-    //   this.jump();
-      
-    //   // Update interface (example: log the jump action)
-    //   console.log("Player jumped!");
-
-    //   jumpFlag = false; // Reset the jump flag
+    // if (this.sys.isTransitionOut()) {
+    //   // The scene is destroyed
+    //   localStorage.clear();
     // }
-    
-    
+
+    const retrievedDataString = localStorage.getItem("myinput");
+
+    // Convert the string back to an array
+    let retrievedDataArray = JSON.parse(retrievedDataString);
+
+    console.log(retrievedDataArray); // Output: ["apple", "banana", "orange"]
+
+    if (retrievedDataArray === null) {
+      console.log("Nothing");
+    }
+
+
+    if (retrievedDataArray && retrievedDataArray[0] === "jump") {
+      this.jump(true);
+      retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
+      localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
+    }
+
 
     if (this.cursors.left.isDown) {
+      // this.jump();
       this.player.setVelocityX(-160);
 
       this.player.anims.play("left", true);
@@ -113,22 +245,120 @@ export default class GameScene extends Phaser.Scene {
       this.player.anims.play("turn");
     }
 
-    if (this.cursors.up.isDown && this.player.body.touching.down) {
-      this.player.setVelocityY(-330);
-    }
+    // const retrievedDataString = localStorage.getItem("myinput");
 
-    // GameScene.prototype.handleUserInput = handleUserInput;
+    // // Convert the string back to an array
+    // const retrievedDataArray = JSON.parse(retrievedDataString);
+
+    // console.log(retrievedDataArray); // Output: ["apple", "banana", "orange"]
+
+    // if (retrievedDataArray[0] == 'jump' ){
+    //   this.jump()
+    // }
+
+    // if (this.cursors.left.isDown) {
+    //   // this.jump();
+    //   this.player.setVelocityX(-160);
+
+    //   this.player.anims.play("left", true);
+    // } else if (this.cursors.right.isDown) {
+    //   this.player.setVelocityX(160);
+
+    //   this.player.anims.play("right", true);
+    // } else {
+    //   this.player.setVelocityX(0);
+
+    //   this.player.anims.play("turn");
+    // }
+
+    // if (this.cursors.up.isDown && this.player.body.touching.down) {
+    //   this.player.setVelocityY(-330);
+    // }
   }
+
+  // // Checking
+
+  // //   window.addEventListener("storage", handleStorageChange);
+
+  // //   function handleStorageChange() {
+  // //     if (localStorage.key === "myinput") {
+  // //       // Code to execute when the "myinput" key in the local storage changes
+
+  // //       const retrievedDataString = localStorage.getItem("myinput");
+  // //       const retrievedDataArray = JSON.parse(retrievedDataString);
+  // //       console.log(retrievedDataArray);
+  // //       console.log("got u")
+
+  // //       for (let i = 0; i < retrievedDataArray.length; i++) {
+  // //         if (retrievedDataArray[i] === "jump") {
+  // //           if (this.player.body.touching.down) {
+  // //             this.player.setVelocityY(-330);
+  // //           }
+  // //         } else if (retrievedDataArray[i] === "moveLeft") {
+  // //           this.player.setVelocityX(-160);
+  // //           console.log("Executing Move left")
+  // //           this.player.anims.play("left", true);
+  // //         } else if (retrievedDataArray[i] === "moveRight") {
+  // //           this.player.setVelocityX(160);
+  // //           this.player.anims.play("right", true);
+  // //         } else {
+  // //           console.log("Error Code, Please Insert a correct method");
+  // //         }
+  // //       }
+  // //     }
+  // //   }
+
+  // // window.addEventListener("storage", handleStorageChange);
+
+  // //     const retrievedDataString = localStorage.getItem("myinput");
+
+  // //     // Convert the string back to an array
+  // //     const retrievedDataArray = JSON.parse(retrievedDataString);
+
+  // //     console.log(retrievedDataArray); // Output: ["apple", "banana", "orange"]
+
+  // //     for (let i = 0; i < retrievedDataArray.length; i++) {
+  // //       if (retrievedDataArray[i] === "jump") {
+  // //         // gameScene.jump(lines)
+  // //         if ( this.player.body.touching.down) {
+  // //           this.player.setVelocityY(-330);
+  // //         }
+
+  // //       } else if (retrievedDataArray[i] === "moveLeft") {
+  // //         // gameScene.moveLeft(lines)
+  // //         this.player.setVelocityX(-160);
+  // //         console.log("Executing Move left")
+  // //         this.player.anims.play("left", true);
+
+  // //       } else if (retrievedDataArray[i] === "moveRight") {
+  // //         // gameScene.moveRight(lines)
+  // //         this.player.setVelocityX(160);
+
+  // //         this.player.anims.play("right", true);
+  // //       } else {
+  // // console.log("Error Code , Please Insert a correct method ")
+  // //       }
+  // //     }
+
+  // // console.log(this.test);
+
+  // // if (true) {
+  // //   this.jump();
+  // //   // jumpFlag = false; // Reset the jumpFlag to false after executing the jump
+  // // }
+  // }
 
   // Creating the Movement Functions
   moveLeft() {
-    this.player.setVelocityX(-160);
-    this.player.anims.play("left", true);
+    console.log("Left Working");
+    if (this.player) {
+      return this.player.setVelocityX(-800);
+    }
   }
 
   // Move right function
   moveRight() {
-    this.player.setVelocityX(160);
+    this.player.setVelocityX(-160);
     this.player.anims.play("right", true);
   }
 

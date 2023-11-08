@@ -3,6 +3,8 @@ import Phaser from "phaser";
 import GameScene from "./GameScene";
 import CodeMirror from "codemirror";
 
+const gameScene = new GameScene();
+
 const config = {
   type: Phaser.AUTO,
   width: 800,
@@ -16,8 +18,39 @@ const config = {
   scene: [GameScene],
 };
 
-let jumpFlag = false;
+// const config = {
+//   type: Phaser.AUTO,
+//   width: 800,
+//   height: 600,
+//   physics: {
+//     default: "arcade",
+//     arcade: {
+//       gravity: { y: 300 },
+//     },
+//   },
+//   scene: [GameScene],
+// };
 
+// const mergedConfig = {
+//   ...config,
+//   scene: {
+//     preload: gameScene.preload,
+//     create: gameScene.create,
+//     update: function() {
+//       customUpdate("Hello, ", "Phaser!");
+//     },
+//   },
+// };
+
+
+function customUpdate(arg1, arg2) {
+  // This function is called on every frame update
+  // You can access and use arg1 and arg2 within this function
+  console.log(arg1 + arg2);
+  // In this example, it will print "Hello, Phaser!" in the console
+}
+
+let jumpFlag = false;
 
 function createTextEditorPage() {
   // Create the <textarea> element
@@ -41,7 +74,8 @@ function createTextEditorPage() {
   document.body.appendChild(button);
 
   // Creating an instance of the GameScene and interacting with the game
-  const gameScene = new GameScene();
+
+  // console.log(gameScene);
 
   // Create the CodeMirror editor
   var editor = CodeMirror.fromTextArea(
@@ -55,13 +89,42 @@ function createTextEditorPage() {
   );
 
   function runCode() {
-    gameScene.jump();
+    const test = 10 
+    gameScene.jumpFlag = true; // Set the jumpFlag property of the gameScene object to true when the button is clicked
 
-	jumpFlag = true; // Set the jump flag to true when the button is clicked
+    gameScene.jump();
+    // gameScene.moveRight();
 
     const code = editor.getValue();
-    const lines = code.split("\n");
-    console.log(lines);
+    const inputArray = code.split("\n");
+
+    console.log(inputArray)
+
+    const inputString = JSON.stringify(inputArray);
+
+    // Store the data in the local storage
+    localStorage.setItem("myinput", inputString);
+
+
+    // gameScene.jump(input);
+
+//     for (let i = 0; i < input.length; i++) {
+//       if (lines[i] === "jump") {
+//         // gameScene.jump(lines)
+        
+//       } else if (lines[i] === "moveLeft") {
+//         gameScene.moveLeft(lines)
+
+//       } else if (lines[i] === "moveRight") {
+//         gameScene.moveRight(lines)
+
+//         console.log("Moving right!");
+//       } else {
+// console.log("Error Code , Please Insert a correct method ")
+//       }
+//     }
+
+    // console.log(lines);
   }
 }
 
