@@ -205,7 +205,7 @@ export default class GameScene extends Phaser.Scene {
     if (this.gameOver) {
       return;
     }
-
+// this works
     // if (this.sys.isTransitionOut()) {
     //   // The scene is destroyed
     //   localStorage.clear();

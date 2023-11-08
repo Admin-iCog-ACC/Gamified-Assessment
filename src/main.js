@@ -18,29 +18,7 @@ const config = {
   scene: [GameScene],
 };
 
-// const config = {
-//   type: Phaser.AUTO,
-//   width: 800,
-//   height: 600,
-//   physics: {
-//     default: "arcade",
-//     arcade: {
-//       gravity: { y: 300 },
-//     },
-//   },
-//   scene: [GameScene],
-// };
 
-// const mergedConfig = {
-//   ...config,
-//   scene: {
-//     preload: gameScene.preload,
-//     create: gameScene.create,
-//     update: function() {
-//       customUpdate("Hello, ", "Phaser!");
-//     },
-//   },
-// };
 
 
 function customUpdate(arg1, arg2) {
