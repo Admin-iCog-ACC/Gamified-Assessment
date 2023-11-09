@@ -23,8 +23,9 @@ export default class GameScene extends Phaser.Scene {
     this.gameOver = false;
     this.jumpFlag = false;
     this.key = "";
+    this.distance = 0;
     this.initialJumpFlag = false;
-    
+
     this.delayTimer = null; // Timer for delaying the automatic update
     this.delayDuration = 2000; // Delay duration in milliseconds
 
@@ -61,16 +62,16 @@ export default class GameScene extends Phaser.Scene {
     // Adding Colliders
     this.physics.add.collider(this.player, platforms);
     this.physics.add.collider(this.stars, platforms);
-    this.physics.add.collider(bombsGroup, platforms);
-    this.physics.add.collider(
-      this.player,
-      bombsGroup,
-      this.hitBomb,
-      null,
-      this
+    // this.physics.add.collider(bombsGroup, platforms);
+    // this.physics.add.collider(
+    //   this.player,
+    //   bombsGroup,
+    //   this.hitBomb,
+    //   null,
+    //   this
 
-      // createTextEditorPage();
-    );
+    //   // createTextEditorPage();
+    // );
 
     // Overlap B/n Player and Star
     this.physics.add.overlap(
@@ -197,19 +198,68 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  stopJump(){
-    this.player.setVelocityY(0);
+  // lefty(jumpFlag) {
+  //   if (
+  //     jumpFlag &&
+  //     this.player &&
+  //     this.player.body &&
+  //     this.player.body.touching &&
+  //     this.player.body.touching.down
+  //   ) {
+  //     this.player.setVelocityX(-1000);
+  //     jumpFlag = false
+  //   }
+  // }
+
+  righty(jumpFlag) {
+    if (
+      jumpFlag &&
+      this.player &&
+      this.player.body &&
+      this.player.body.touching &&
+      this.player.body.touching.down
+    ) {
+      var speed = 300;
+
+      this.player.setVelocityX(speed);
+      this.player.anims.play("right", true);
+
+      // Setting the timeout after seconds
+      setTimeout(() => {
+        this.player.setVelocityX(0);
+      }, 200);
+
+      jumpFlag = false;
+    }
+  }
+
+  lefty(jumpFlag) {
+    if (
+      jumpFlag &&
+      this.player &&
+      this.player.body &&
+      this.player.body.touching &&
+      this.player.body.touching.down
+    ) {
+      var speed = -300;
+      var duration = 170;
+
+      this.player.setVelocityX(speed);
+      this.player.anims.play("left", true);
+
+      // Setting the timeout after seconds
+      setTimeout(() => {
+        this.player.setVelocityX(0);
+      }, duration);
+
+      jumpFlag = false;
+    }
   }
 
   update(time, delta) {
     if (this.gameOver) {
       return;
     }
-// this works
-    // if (this.sys.isTransitionOut()) {
-    //   // The scene is destroyed
-    //   localStorage.clear();
-    // }
 
     const retrievedDataString = localStorage.getItem("myinput");
 
@@ -222,6 +272,36 @@ export default class GameScene extends Phaser.Scene {
       console.log("Nothing");
     }
 
+    if (retrievedDataArray && retrievedDataArray[0] === "righty") {
+      this.righty(true, 200);
+      retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
+      localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
+    }
+
+    if (retrievedDataArray && retrievedDataArray[0] === "lefty") {
+      this.lefty(true, 200);
+      retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
+      localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
+    }
+
+    // if (retrievedDataArray) {
+    //   let jumpCount = 0;
+    //   let i = 0;
+
+    //   while (i < retrievedDataArray.length && retrievedDataArray[i] === "jump") {
+    //     jumpCount++;
+    //     i++;
+    //   }
+
+    //   for (let j = 0; j < jumpCount; j++) {
+    //     this.jump(true);
+    //   }
+
+    //   retrievedDataArray = retrievedDataArray.slice(jumpCount);
+    //   localStorage.setItem("myinput", JSON.stringify(retrievedDataArray));
+
+    //   console.log(retrievedDataArray); // Output: Remaining elements in the array
+    // }
 
     if (retrievedDataArray && retrievedDataArray[0] === "jump") {
       this.jump(true);
@@ -229,21 +309,20 @@ export default class GameScene extends Phaser.Scene {
       localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
     }
 
+    // if (this.cursors.left.isDown) {
+    //   // this.jump();
+    //   this.player.setVelocityX(-160);
 
-    if (this.cursors.left.isDown) {
-      // this.jump();
-      this.player.setVelocityX(-160);
+    //   this.player.anims.play("left", true);
+    // } else if (this.cursors.right.isDown) {
+    //   this.player.setVelocityX(160);
 
-      this.player.anims.play("left", true);
-    } else if (this.cursors.right.isDown) {
-      this.player.setVelocityX(160);
+    //   this.player.anims.play("right", true);
+    // } else {
+    //   this.player.setVelocityX(0);
 
-      this.player.anims.play("right", true);
-    } else {
-      this.player.setVelocityX(0);
-
-      this.player.anims.play("turn");
-    }
+    //   this.player.anims.play("turn");
+    // }
 
     // const retrievedDataString = localStorage.getItem("myinput");
 
