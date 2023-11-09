@@ -25,6 +25,7 @@ export default class GameScene extends Phaser.Scene {
     this.key = "";
     this.distance = 0;
     this.initialJumpFlag = false;
+    this.isButtonClicked = false;
 
     this.delayTimer = null; // Timer for delaying the automatic update
     this.delayDuration = 2000; // Delay duration in milliseconds
@@ -56,13 +57,15 @@ export default class GameScene extends Phaser.Scene {
     this.stars = this.createStars();
     this.scoreLabel = this.createScoreLabel(16, 16, 0);
 
+    // Create a button
+
     this.bombSpawner = new BombSpawner(this, BOMB_KEY);
     const bombsGroup = this.bombSpawner.group;
 
     // Adding Colliders
     this.physics.add.collider(this.player, platforms);
     this.physics.add.collider(this.stars, platforms);
-    // this.physics.add.collider(bombsGroup, platforms);
+    this.physics.add.collider(bombsGroup, platforms);
     // this.physics.add.collider(
     //   this.player,
     //   bombsGroup,
@@ -84,106 +87,23 @@ export default class GameScene extends Phaser.Scene {
 
     //
     this.cursors = this.input.keyboard.createCursorKeys();
+
+    const button = this.add.text(200, 200, "Run Game", {
+      backgroundColor: "#ff0000",
+      padding: {
+        left: 30,
+        right: 30,
+        top: 20,
+        bottom: 20,
+      },
+    });
+
+    // Enable button interactivity
+    button.setInteractive();
+
+    // Add button click event listener
+    button.on("pointerdown", this.onButtonClick, this);
   }
-
-  // d
-
-  moveRight(lines) {
-    if (this.player && this.player.body && this.player.body.touching.down) {
-      return this.player.setVelocityY(-330);
-    }
-
-    console.log("Moving Right");
-
-    console.log(lines);
-    // this.jumpFlag = false;
-  }
-
-  jump() {
-    if (this.player && this.player.body && this.player.body.touching.down) {
-      return this.player.setVelocityY(-330);
-    }
-
-    console.log("Jump up");
-
-    // console.log(lines);
-    // this.jumpFlag = false;
-  }
-
-  retriver() {
-    // Retrieve the data from the local storage
-    const retrievedDataString = localStorage.getItem("myinput");
-
-    // Convert the string back to an array
-    const retrievedDataArray = JSON.parse(retrievedDataString);
-
-    console.log(retrievedDataArray); // Output: ["apple", "banana", "orange"]
-
-    console.log("Retriver Worked sucessfully");
-  }
-
-  // New implementation
-  // handleStorageChange() {
-  //   if (localStorage.key === "myinput") {
-  //     // Code to execute when the "myinput" key in the local storage changes
-
-  //     const retrievedDataString = localStorage.getItem("myinput");
-  //     const retrievedDataArray = JSON.parse(retrievedDataString);
-  //     console.log(retrievedDataArray);
-  //     console.log("got u");
-
-  //     for (let i = 0; i < retrievedDataArray.length; i++) {
-  //       if (retrievedDataArray[i] === "jump") {
-  //         if (this.player.body.touching.down) {
-  //           this.player.setVelocityY(-330);
-  //         }
-  //       } else if (retrievedDataArray[i] === "moveLeft") {
-  //         this.player.setVelocityX(-160);
-  //         console.log("Executing Move left");
-  //         this.player.anims.play("left", true);
-  //       } else if (retrievedDataArray[i] === "moveRight") {
-  //         this.player.setVelocityX(160);
-  //         this.player.anims.play("right", true);
-  //       } else {
-  //         console.log("Error Code, Please Insert a correct method");
-  //       }
-  //     }
-  //   }
-  // }
-
-  clikedRun() {
-    console.log("Click Event working");
-  }
-
-  // customUpdate(scene, arg1) {
-  //     this.jump(arg1)
-  //   // In this example, it will print "Hello, Phaser!" in the console
-  // }
-
-  // jump(jumpFlag) {
-  //   if (
-  //     !(this.jumpFlag) &&
-  //     this.player &&
-  //     this.player.body &&
-  //     this.player.body.touching.down
-  //   ) {
-  //     return this.player.setVelocityY(-330);
-  //   }
-
-  //   console.log("Jump up");
-  // }
-
-  // jump(jumpFlag) {
-  //   console.log("hi")
-  //   if (jumpFlag && this.player && this.player.body && this.player.body.touching.down) {
-  //     this.player.setVelocityY(-330);
-  //     jumpFlag = false
-  //   }
-  //   else{
-  //     this.player.setVelocityY(0)
-  //   }
-
-  // }
 
   jump(jumpFlag) {
     if (
@@ -208,6 +128,28 @@ export default class GameScene extends Phaser.Scene {
   //   ) {
   //     this.player.setVelocityX(-1000);
   //     jumpFlag = false
+  //   }
+  // }
+
+  // projectile() {
+  //   if (
+  //     this.player &&
+  //     this.player.body &&
+  //     this.player.body.touching &&
+  //     this.player.body.touching.down
+  //   ) {
+  //     var jumpSpeed = 200; // Adjust the initial jump speed as needed
+  //     var jumpAngle = -45; // Adjust the jump angle (in degrees) as needed
+
+  //     // Convert the jump angle from degrees to radians
+  //     var jumpAngleRad = Phaser.Math.DegToRad(jumpAngle);
+
+  //     // Calculate the jump velocity components
+  //     var jumpVelocityX = jumpSpeed * Math.cos(jumpAngleRad);
+  //     var jumpVelocityY = jumpSpeed * Math.sin(jumpAngleRad);
+
+  //     this.player.setVelocityX(300);
+  //     this.player.setVelocityY(100);
   //   }
   // }
 
@@ -256,58 +198,64 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  update(time, delta) {
+  //
+
+  onButtonClick() {
+    // Set the flag when the button is clicked
+    this.isButtonClicked = true;
+  }
+
+  update() {
     if (this.gameOver) {
       return;
     }
 
-    const retrievedDataString = localStorage.getItem("myinput");
 
-    // Convert the string back to an array
-    let retrievedDataArray = JSON.parse(retrievedDataString);
+    if (this.isButtonClicked) {
+      // Execute logic when button is clicked
+      const retrievedDataString = localStorage.getItem("myinput");
 
-    console.log(retrievedDataArray); // Output: ["apple", "banana", "orange"]
+      // Convert the string back to an array
+      let retrievedDataArray = JSON.parse(retrievedDataString);
 
-    if (retrievedDataArray === null) {
-      console.log("Nothing");
+      console.log(retrievedDataArray); // Output: ["apple", "banana", "orange"]
+
+      for (let i = 0; i < retrievedDataArray.length; i++) {
+        const currentElement = retrievedDataArray[i];
+
+        console.log("Processing:", currentElement);
+
+        if (retrievedDataArray === null) {
+          console.log("Nothing");
+        }
+
+        if (retrievedDataArray && retrievedDataArray[0] === "righty") {
+          this.righty(true, 200);
+          retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
+          localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
+        }
+
+        if (retrievedDataArray && retrievedDataArray[0] === "lefty") {
+          this.lefty(true, 200);
+          retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
+          localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
+        }
+
+        if (retrievedDataArray && retrievedDataArray[0] === "jump") {
+          this.jump(true);
+          retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
+          localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
+        }
+
+        // Reset the flag after executing the logic
+        this.isButtonClicked = false;
+
+        retrievedDataArray.splice(i, 1);
+        i--;
+      }
     }
 
-    if (retrievedDataArray && retrievedDataArray[0] === "righty") {
-      this.righty(true, 200);
-      retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
-      localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
-    }
-
-    if (retrievedDataArray && retrievedDataArray[0] === "lefty") {
-      this.lefty(true, 200);
-      retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
-      localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
-    }
-
-    // if (retrievedDataArray) {
-    //   let jumpCount = 0;
-    //   let i = 0;
-
-    //   while (i < retrievedDataArray.length && retrievedDataArray[i] === "jump") {
-    //     jumpCount++;
-    //     i++;
-    //   }
-
-    //   for (let j = 0; j < jumpCount; j++) {
-    //     this.jump(true);
-    //   }
-
-    //   retrievedDataArray = retrievedDataArray.slice(jumpCount);
-    //   localStorage.setItem("myinput", JSON.stringify(retrievedDataArray));
-
-    //   console.log(retrievedDataArray); // Output: Remaining elements in the array
-    // }
-
-    if (retrievedDataArray && retrievedDataArray[0] === "jump") {
-      this.jump(true);
-      retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
-      localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
-    }
+    //  write the code below
 
     // if (this.cursors.left.isDown) {
     //   // this.jump();
@@ -354,78 +302,6 @@ export default class GameScene extends Phaser.Scene {
     //   this.player.setVelocityY(-330);
     // }
   }
-
-  // // Checking
-
-  // //   window.addEventListener("storage", handleStorageChange);
-
-  // //   function handleStorageChange() {
-  // //     if (localStorage.key === "myinput") {
-  // //       // Code to execute when the "myinput" key in the local storage changes
-
-  // //       const retrievedDataString = localStorage.getItem("myinput");
-  // //       const retrievedDataArray = JSON.parse(retrievedDataString);
-  // //       console.log(retrievedDataArray);
-  // //       console.log("got u")
-
-  // //       for (let i = 0; i < retrievedDataArray.length; i++) {
-  // //         if (retrievedDataArray[i] === "jump") {
-  // //           if (this.player.body.touching.down) {
-  // //             this.player.setVelocityY(-330);
-  // //           }
-  // //         } else if (retrievedDataArray[i] === "moveLeft") {
-  // //           this.player.setVelocityX(-160);
-  // //           console.log("Executing Move left")
-  // //           this.player.anims.play("left", true);
-  // //         } else if (retrievedDataArray[i] === "moveRight") {
-  // //           this.player.setVelocityX(160);
-  // //           this.player.anims.play("right", true);
-  // //         } else {
-  // //           console.log("Error Code, Please Insert a correct method");
-  // //         }
-  // //       }
-  // //     }
-  // //   }
-
-  // // window.addEventListener("storage", handleStorageChange);
-
-  // //     const retrievedDataString = localStorage.getItem("myinput");
-
-  // //     // Convert the string back to an array
-  // //     const retrievedDataArray = JSON.parse(retrievedDataString);
-
-  // //     console.log(retrievedDataArray); // Output: ["apple", "banana", "orange"]
-
-  // //     for (let i = 0; i < retrievedDataArray.length; i++) {
-  // //       if (retrievedDataArray[i] === "jump") {
-  // //         // gameScene.jump(lines)
-  // //         if ( this.player.body.touching.down) {
-  // //           this.player.setVelocityY(-330);
-  // //         }
-
-  // //       } else if (retrievedDataArray[i] === "moveLeft") {
-  // //         // gameScene.moveLeft(lines)
-  // //         this.player.setVelocityX(-160);
-  // //         console.log("Executing Move left")
-  // //         this.player.anims.play("left", true);
-
-  // //       } else if (retrievedDataArray[i] === "moveRight") {
-  // //         // gameScene.moveRight(lines)
-  // //         this.player.setVelocityX(160);
-
-  // //         this.player.anims.play("right", true);
-  // //       } else {
-  // // console.log("Error Code , Please Insert a correct method ")
-  // //       }
-  // //     }
-
-  // // console.log(this.test);
-
-  // // if (true) {
-  // //   this.jump();
-  // //   // jumpFlag = false; // Reset the jumpFlag to false after executing the jump
-  // // }
-  // }
 
   // Creating the Movement Functions
   moveLeft() {
