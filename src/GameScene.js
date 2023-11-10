@@ -210,8 +210,28 @@ export default class GameScene extends Phaser.Scene {
       return;
     }
 
+    // if(this.isButtonClicked){
+
+    //   const strings = ["jump", "righty", "lefty"];
+    //   let index = 0;
+    //   function processNextElement() {
+    //     if (index < strings.length) {
+    //       const currentString = strings[index];
+    //       console.log("Processing:", currentString);
+    //       index++;
+    //       setTimeout(processNextElement, 200); // Delay of 1 second (1000 milliseconds)
+    //     } else {
+    //       console.log("All elements processed");
+    //       this.isButtonClicked = false;
+    //     }
+    //   }
+
+    //   processNextElement()
+    // }
 
     if (this.isButtonClicked) {
+      let index = 0;
+
       // Execute logic when button is clicked
       const retrievedDataString = localStorage.getItem("myinput");
 
@@ -220,40 +240,85 @@ export default class GameScene extends Phaser.Scene {
 
       console.log(retrievedDataArray); // Output: ["apple", "banana", "orange"]
 
-      for (let i = 0; i < retrievedDataArray.length; i++) {
-        const currentElement = retrievedDataArray[i];
+      const processNextElement = () => {
+        if (index < retrievedDataArray.length) {
+          const currentString = retrievedDataArray[index];
+          console.log("Processing:", currentString);
 
-        console.log("Processing:", currentElement);
+          if (currentString === "righty") {
+            this.righty(true, 200); // Access class method using `this`
+          }
 
-        if (retrievedDataArray === null) {
-          console.log("Nothing");
+          if (currentString === "lefty") {
+                  this.lefty(true, 200);  
+          }
+
+          if (currentString === "jump") {
+                  this.jump(true);
+          }
+
+          index++;
+          setTimeout(processNextElement, 500);
+        } else {
+          console.log("All elements processed");
+          this.isButtonClicked = false;
         }
+      };
 
-        if (retrievedDataArray && retrievedDataArray[0] === "righty") {
-          this.righty(true, 200);
-          retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
-          localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
-        }
+      processNextElement();
 
-        if (retrievedDataArray && retrievedDataArray[0] === "lefty") {
-          this.lefty(true, 200);
-          retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
-          localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
-        }
-
-        if (retrievedDataArray && retrievedDataArray[0] === "jump") {
-          this.jump(true);
-          retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
-          localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
-        }
-
-        // Reset the flag after executing the logic
-        this.isButtonClicked = false;
-
-        retrievedDataArray.splice(i, 1);
-        i--;
-      }
+      // Reset the flag after executing the logic
+      this.isButtonClicked = false;
     }
+
+    ///// WORKING VERSION
+
+    // if (this.isButtonClicked) {
+
+    // //   processNextElement()
+
+    //   // Execute logic when button is clicked
+    //   const retrievedDataString = localStorage.getItem("myinput");
+
+    //   // Convert the string back to an array
+    //   let retrievedDataArray = JSON.parse(retrievedDataString);
+
+    //   console.log(retrievedDataArray); // Output: ["apple", "banana", "orange"]
+
+    //   for (let i = 0; i < retrievedDataArray.length; i++) {
+    //     const currentElement = retrievedDataArray[i];
+
+    //     console.log("Processing:", currentElement);
+
+    //     if (retrievedDataArray === null) {
+    //       console.log("Nothing");
+    //     }
+
+    //     if (retrievedDataArray && retrievedDataArray[0] === "righty") {
+    //       this.righty(true, 200);
+    //       retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
+    //       localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
+    //     }
+
+    //     if (retrievedDataArray && retrievedDataArray[0] === "lefty") {
+    //       this.lefty(true, 200);
+    //       retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
+    //       localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
+    //     }
+
+    //     if (retrievedDataArray && retrievedDataArray[0] === "jump") {
+    //       this.jump(true);
+    //       retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
+    //       localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
+    //     }
+
+    //     retrievedDataArray.splice(i, 1);
+    //     i--;
+    //   }
+
+    //    // Reset the flag after executing the logic
+    //    this.isButtonClicked = false;
+    // }
 
     //  write the code below
 
