@@ -2,20 +2,21 @@ import Phaser from "phaser";
 
 import GameScene from "./GameScene";
 import CodeMirror from "codemirror";
+import GameOver from "./GameoverScene";
 
 const gameScene = new GameScene();
 
 const config = {
   type: Phaser.AUTO,
   width: 800,
-  height: 600,
+  height: 570,
   physics: {
     default: "arcade",
     arcade: {
       gravity: { y: 300 },
     },
   },
-  scene: [GameScene],
+  scene: [GameScene , GameOver],
 };
 
 
@@ -40,13 +41,14 @@ function createTextEditorPage() {
   // Create the "Run Code" button
   var button = document.createElement("button");
   button.textContent = "Run Code";
-  button.style.width = "7rem";
+  button.style.width = "20%";
   button.style.position = "absolute";
+  button.style.backgroundColor = "slate"
   button.style.bottom = "0";
   button.style.marginBottom = "3rem";
   button.style.right = "0";
-  button.style.height = "2rem";
-  button.style.marginTop = "2rem";
+  button.style.height = "4rem";
+  button.style.marginTop = "4rem";
   button.onclick = runCode;
   button.id = "runButton"; // Add the id attribute
   document.body.appendChild(button);

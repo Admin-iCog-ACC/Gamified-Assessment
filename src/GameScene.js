@@ -43,6 +43,8 @@ export default class GameScene extends Phaser.Scene {
       frameWidth: 32,
       frameHeight: 48,
     });
+
+    // this.load.audio('bgMusic', 'music.mp3');
   }
 
   create() {
@@ -88,13 +90,13 @@ export default class GameScene extends Phaser.Scene {
     //
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    const button = this.add.text(200, 200, "Run Game", {
+    const button = this.add.text(650, 450, "Run Game", {
       backgroundColor: "#ff0000",
       padding: {
-        left: 30,
-        right: 30,
-        top: 20,
-        bottom: 20,
+        left: 50,
+        right: 50,
+        top: 50,
+        bottom: 50,
       },
     });
 
@@ -103,86 +105,28 @@ export default class GameScene extends Phaser.Scene {
 
     // Add button click event listener
     button.on("pointerdown", this.onButtonClick, this);
+
+    // // Background Music
+    // // this.load.audio('bgMusic', 'music.mp3');
+
+    // this.sound.pauseOnBlur = false; // Keep playing music when the game loses focus
+
+    // this.sound.play('bgMusic', {
+    //     loop: true
+    // });
   }
 
   jump(jumpFlag) {
-    if (
-      jumpFlag &&
-      this.player &&
-      this.player.body &&
-      this.player.body.touching &&
-      this.player.body.touching.down
-    ) {
-      this.player.setVelocityY(-330);
-      // this.stopJump(); // Call stopJump() after the jump action
-    }
-  }
-
-  // lefty(jumpFlag) {
-  //   if (
-  //     jumpFlag &&
-  //     this.player &&
-  //     this.player.body &&
-  //     this.player.body.touching &&
-  //     this.player.body.touching.down
-  //   ) {
-  //     this.player.setVelocityX(-1000);
-  //     jumpFlag = false
-  //   }
-  // }
-
-  // projectile() {
-  //   if (
-  //     this.player &&
-  //     this.player.body &&
-  //     this.player.body.touching &&
-  //     this.player.body.touching.down
-  //   ) {
-  //     var jumpSpeed = 200; // Adjust the initial jump speed as needed
-  //     var jumpAngle = -45; // Adjust the jump angle (in degrees) as needed
-
-  //     // Convert the jump angle from degrees to radians
-  //     var jumpAngleRad = Phaser.Math.DegToRad(jumpAngle);
-
-  //     // Calculate the jump velocity components
-  //     var jumpVelocityX = jumpSpeed * Math.cos(jumpAngleRad);
-  //     var jumpVelocityY = jumpSpeed * Math.sin(jumpAngleRad);
-
-  //     this.player.setVelocityX(300);
-  //     this.player.setVelocityY(100);
-  //   }
-  // }
-
-  righty(jumpFlag) {
-    if (
-      jumpFlag &&
-      this.player &&
-      this.player.body &&
-      this.player.body.touching &&
-      this.player.body.touching.down
-    ) {
-      var speed = 300;
-
-      this.player.setVelocityX(speed);
-      this.player.anims.play("right", true);
-
-      // Setting the timeout after seconds
+    if (jumpFlag && this.player && this.player.body) {
+      this.player.setVelocityY(-200);
       setTimeout(() => {
-        this.player.setVelocityX(0);
-      }, 200);
-
-      jumpFlag = false;
+        this.player.setVelocityY(0);
+      }, 30000);
     }
   }
 
   lefty(jumpFlag) {
-    if (
-      jumpFlag &&
-      this.player &&
-      this.player.body &&
-      this.player.body.touching &&
-      this.player.body.touching.down
-    ) {
+    if (jumpFlag && this.player && this.player.body) {
       var speed = -300;
       var duration = 170;
 
@@ -198,6 +142,42 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
+// WOrking righty
+// righty(jumpFlag) {
+//   if (jumpFlag && this.player && this.player.body) {
+//     var speed = 300;
+
+//     this.player.setVelocityX(speed);
+//     this.player.anims.play("right", true);
+
+//     // Setting the timeout after seconds
+//     setTimeout(() => {
+//       this.player.setVelocityX(0);
+//     }, 200);
+
+//     jumpFlag = false;
+//   }
+// }
+
+righty(jumpFlag , repitition) {
+
+  for (let i = 0 ; i < repitition ; repitition++ ){
+    if (jumpFlag && this.player && this.player.body) {
+      var speed = 300;
+  
+      this.player.setVelocityX(speed);
+      this.player.anims.play("right", true);
+  
+      // Setting the timeout after seconds
+      setTimeout(() => {
+        this.player.setVelocityX(0);
+      }, 200);
+  
+      jumpFlag = false;
+    }
+  }
+}
+
   //
 
   onButtonClick() {
@@ -210,30 +190,11 @@ export default class GameScene extends Phaser.Scene {
       return;
     }
 
-    // if(this.isButtonClicked){
-
-    //   const strings = ["jump", "righty", "lefty"];
-    //   let index = 0;
-    //   function processNextElement() {
-    //     if (index < strings.length) {
-    //       const currentString = strings[index];
-    //       console.log("Processing:", currentString);
-    //       index++;
-    //       setTimeout(processNextElement, 200); // Delay of 1 second (1000 milliseconds)
-    //     } else {
-    //       console.log("All elements processed");
-    //       this.isButtonClicked = false;
-    //     }
-    //   }
-
-    //   processNextElement()
-    // }
-
     if (this.isButtonClicked) {
       let index = 0;
 
       // Execute logic when button is clicked
-      const retrievedDataString = localStorage.getItem("myinput");
+      let retrievedDataString = localStorage.getItem("myinput");
 
       // Convert the string back to an array
       let retrievedDataArray = JSON.parse(retrievedDataString);
@@ -246,21 +207,23 @@ export default class GameScene extends Phaser.Scene {
           console.log("Processing:", currentString);
 
           if (currentString === "righty") {
-            this.righty(true, 200); // Access class method using `this`
+            this.righty(true, 4); // Access class method using `this`
           }
 
           if (currentString === "lefty") {
-                  this.lefty(true, 200);  
+            this.lefty(true);
           }
 
           if (currentString === "jump") {
-                  this.jump(true);
+            this.jump(true);
           }
 
           index++;
-          setTimeout(processNextElement, 500);
+          setTimeout(processNextElement, 1000);
         } else {
           console.log("All elements processed");
+          retrievedDataString = "";
+          retrievedDataArray = [];
           this.isButtonClicked = false;
         }
       };
