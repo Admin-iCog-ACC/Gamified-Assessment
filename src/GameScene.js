@@ -44,7 +44,9 @@ export default class GameScene extends Phaser.Scene {
       frameHeight: 48,
     });
 
-    // this.load.audio('bgMusic', 'music.mp3');
+    this.load.audio("right-left", "assets/pepSound1.ogg");
+    this.load.audio("jump", "assets/phaseJump3.ogg");
+    this.load.audio("backgroundMusic", "assets/background-music.mp3");
   }
 
   create() {
@@ -87,6 +89,7 @@ export default class GameScene extends Phaser.Scene {
       this
     );
 
+    this.backgroundMusic = this.sound.add("backgroundMusic", { loop: true });
     //
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -99,6 +102,8 @@ export default class GameScene extends Phaser.Scene {
         bottom: 50,
       },
     });
+
+    // this.backgroundMusic.play();
 
     // Enable button interactivity
     button.setInteractive();
@@ -116,8 +121,10 @@ export default class GameScene extends Phaser.Scene {
     // });
   }
 
-  jump(jumpFlag) {
-    if (jumpFlag && this.player && this.player.body) {
+  jump() {
+    if (this.player && this.player.body) {
+      this.sound.play("jump");
+
       this.player.setVelocityY(-200);
       setTimeout(() => {
         this.player.setVelocityY(0);
@@ -125,10 +132,12 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  lefty(jumpFlag) {
-    if (jumpFlag && this.player && this.player.body) {
+  lefty() {
+    if (this.player && this.player.body) {
       var speed = -300;
       var duration = 170;
+
+      this.sound.play("right-left");
 
       this.player.setVelocityX(speed);
       this.player.anims.play("left", true);
@@ -137,46 +146,71 @@ export default class GameScene extends Phaser.Scene {
       setTimeout(() => {
         this.player.setVelocityX(0);
       }, duration);
-
-      jumpFlag = false;
     }
   }
 
-// WOrking righty
-// righty(jumpFlag) {
-//   if (jumpFlag && this.player && this.player.body) {
-//     var speed = 300;
+  // WOrking righty
 
-//     this.player.setVelocityX(speed);
-//     this.player.anims.play("right", true);
+  // righty() {
+  //   if (this.player && this.player.body) {
+  //     var speed = 300;
 
-//     // Setting the timeout after seconds
-//     setTimeout(() => {
-//       this.player.setVelocityX(0);
-//     }, 200);
+  //     this.sound.play("right-left")
 
-//     jumpFlag = false;
-//   }
-// }
+  //     this.player.setVelocityX(speed);
+  //     this.player.anims.play("right", true);
 
-righty(jumpFlag , repitition) {
+  //     // Setting the timeout after seconds
+  //     setTimeout(() => {
+  //       this.player.setVelocityX(0);
+  //     }, 200);
 
-  for (let i = 0 ; i < repitition ; repitition++ ){
-    if (jumpFlag && this.player && this.player.body) {
+  //   }
+  // }
+
+  righty(jumpCount = 1) {
+    if (this.player && this.player.body) {
       var speed = 300;
-  
-      this.player.setVelocityX(speed);
-      this.player.anims.play("right", true);
-  
-      // Setting the timeout after seconds
-      setTimeout(() => {
-        this.player.setVelocityX(0);
-      }, 200);
-  
-      jumpFlag = false;
+      var jumpDelay = 200; // Delay between each jump in milliseconds
+
+      // Recursive helper function to handle the jumps
+      const jump = (count) => {
+        if (count <= 0) {
+          return;
+        }
+
+        this.sound.play("right-left");
+        this.player.setVelocityX(speed);
+        this.player.anims.play("right", true);
+
+        setTimeout(() => {
+          this.player.setVelocityX(0);
+          jump(count - 1); // Call the jump function recursively with a decreased count
+        }, jumpDelay);
+      };
+
+      jump(jumpCount);
     }
   }
-}
+
+  // righty(jumpFlag , repitition) {
+
+  //   for (let i = 0 ; i < repitition ; repitition++ ){
+  //     if (jumpFlag && this.player && this.player.body) {
+  //       var speed = 300;
+
+  //       this.player.setVelocityX(speed);
+  //       this.player.anims.play("right", true);
+
+  //       // Setting the timeout after seconds
+  //       setTimeout(() => {
+  //         this.player.setVelocityX(0);
+  //       }, 200);
+
+  //       jumpFlag = false;
+  //     }
+  //   }
+  // }
 
   //
 
@@ -206,17 +240,116 @@ righty(jumpFlag , repitition) {
           const currentString = retrievedDataArray[index];
           console.log("Processing:", currentString);
 
-          if (currentString === "righty") {
-            this.righty(true, 4); // Access class method using `this`
+          if (currentString === "right()") {
+            this.righty(); // Access class method using `this`
+          }
+          
+
+          if (currentString === "right(2)") {
+            var number = currentString[6];
+            this.righty(number); // Access class method using `this`
           }
 
-          if (currentString === "lefty") {
-            this.lefty(true);
+          if (currentString === "right(3)") {
+            var number = currentString[6];
+            this.righty(number); // Access class method using `this`
           }
 
-          if (currentString === "jump") {
-            this.jump(true);
+          if (currentString === "right(4)") {
+            var number = currentString[6];
+            this.righty(number); // Access class method using `this`
           }
+
+          if (currentString === "right(5)") {
+            var number = currentString[6];
+            this.righty(number); // Access class method using `this`
+          }
+
+          if (currentString === "right(6)") {
+            var number = currentString[6];
+            this.righty(number); // Access class method using `this`
+          }
+
+          if (currentString === "right(7)") {
+            var number = currentString[6];
+            this.righty(number); // Access class method using `this`
+          }
+
+          if (currentString === "left()") {
+            this.lefty();
+          }
+
+          if (currentString === "left(3)") {
+            var number = currentString[6];
+            this.lefty(number);
+          }
+
+          if (currentString === "left(4)") {
+            var number = currentString[6];
+            this.lefty(number);
+          }
+
+          if (currentString === "left(5)") {
+            var number = currentString[6];
+            this.lefty(number);
+          }
+
+          if (currentString === "left(6)") {
+            var number = currentString[6];
+            this.lefty(number);
+          }
+
+          if (currentString === "left(7)") {
+            var number = currentString[6];
+            this.lefty(number);
+          }
+
+          if (currentString === "left(8)") {
+            var number = currentString[6];
+            this.lefty(number);
+          }
+
+          if (currentString === "left(2)") {
+            var number = currentString[6];
+            this.lefty(number);
+          }
+
+          if (currentString === "left(3)") {
+            var number = currentString[6];
+            this.lefty(number);
+          }
+
+          if (currentString === "left(4)") {
+            var number = currentString[6];
+            this.lefty(number);
+          }
+
+          if (currentString === "left(5)") {
+            var number = currentString[6];
+            this.lefty(number);
+          }
+
+          if (currentString === "left(6)") {
+            var number = currentString[6];
+            this.lefty(number);
+          }
+
+          if (currentString === "left(7)") {
+            var number = currentString[6];
+            this.lefty(number);
+          }
+
+          if (currentString === "left(8)") {
+            var number = currentString[6];
+            this.lefty(number);
+          }
+
+          if (currentString === "left(9)") {
+            var number = currentString[6];
+            this.lefty(number);
+          }
+
+
 
           index++;
           setTimeout(processNextElement, 1000);
@@ -233,102 +366,6 @@ righty(jumpFlag , repitition) {
       // Reset the flag after executing the logic
       this.isButtonClicked = false;
     }
-
-    ///// WORKING VERSION
-
-    // if (this.isButtonClicked) {
-
-    // //   processNextElement()
-
-    //   // Execute logic when button is clicked
-    //   const retrievedDataString = localStorage.getItem("myinput");
-
-    //   // Convert the string back to an array
-    //   let retrievedDataArray = JSON.parse(retrievedDataString);
-
-    //   console.log(retrievedDataArray); // Output: ["apple", "banana", "orange"]
-
-    //   for (let i = 0; i < retrievedDataArray.length; i++) {
-    //     const currentElement = retrievedDataArray[i];
-
-    //     console.log("Processing:", currentElement);
-
-    //     if (retrievedDataArray === null) {
-    //       console.log("Nothing");
-    //     }
-
-    //     if (retrievedDataArray && retrievedDataArray[0] === "righty") {
-    //       this.righty(true, 200);
-    //       retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
-    //       localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
-    //     }
-
-    //     if (retrievedDataArray && retrievedDataArray[0] === "lefty") {
-    //       this.lefty(true, 200);
-    //       retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
-    //       localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
-    //     }
-
-    //     if (retrievedDataArray && retrievedDataArray[0] === "jump") {
-    //       this.jump(true);
-    //       retrievedDataArray = retrievedDataArray.slice(1); // Remove the "jump" command from the array
-    //       localStorage.setItem("myinput", JSON.stringify(retrievedDataArray)); // Update the modified array in local storage
-    //     }
-
-    //     retrievedDataArray.splice(i, 1);
-    //     i--;
-    //   }
-
-    //    // Reset the flag after executing the logic
-    //    this.isButtonClicked = false;
-    // }
-
-    //  write the code below
-
-    // if (this.cursors.left.isDown) {
-    //   // this.jump();
-    //   this.player.setVelocityX(-160);
-
-    //   this.player.anims.play("left", true);
-    // } else if (this.cursors.right.isDown) {
-    //   this.player.setVelocityX(160);
-
-    //   this.player.anims.play("right", true);
-    // } else {
-    //   this.player.setVelocityX(0);
-
-    //   this.player.anims.play("turn");
-    // }
-
-    // const retrievedDataString = localStorage.getItem("myinput");
-
-    // // Convert the string back to an array
-    // const retrievedDataArray = JSON.parse(retrievedDataString);
-
-    // console.log(retrievedDataArray); // Output: ["apple", "banana", "orange"]
-
-    // if (retrievedDataArray[0] == 'jump' ){
-    //   this.jump()
-    // }
-
-    // if (this.cursors.left.isDown) {
-    //   // this.jump();
-    //   this.player.setVelocityX(-160);
-
-    //   this.player.anims.play("left", true);
-    // } else if (this.cursors.right.isDown) {
-    //   this.player.setVelocityX(160);
-
-    //   this.player.anims.play("right", true);
-    // } else {
-    //   this.player.setVelocityX(0);
-
-    //   this.player.anims.play("turn");
-    // }
-
-    // if (this.cursors.up.isDown && this.player.body.touching.down) {
-    //   this.player.setVelocityY(-330);
-    // }
   }
 
   // Creating the Movement Functions
