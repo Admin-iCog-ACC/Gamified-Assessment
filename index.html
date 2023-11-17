@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="overlay">
 
 <head>
 	<meta charset="UTF-8" />
@@ -8,10 +8,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/xml/xml.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/theme/dracula.min.css" />
+	  <link rel="stylesheet" href="styles.css">
+
 	<title>My Phaser 3 Game</title>
 </head>
 
-<body>
+<body id="body-id">
+
+	<!-- <main id="gameCanvas"> -->
+		<canvas id="gameCanvas"></canvas>
+		<div id="gameStartDiv" class="gameUI">
+		  <h1 class="" style="color: white;" >Star Collector</h1>
+		  <p style="color: white;" >You have 10 Minute to collect all the Stars using the Code Provided</p>
+
+		  <button id="gameStartBtn"><p>Start Game</p></button>
+		</div>
+		<div id="gameEndDiv" class="gameUI">
+		  <p>Game Over</p>
+		  <h1>You <span id="gameWinLoseSpan"></span></h1>
+		  <h1>Final Score: <span id="gameEndScoreSpan"></span></h1>
+		  <p>Refresh the Page to play again</p>
+		</div>
+		</div>
+	<!-- </main> -->
+
 	<div id="app"></div>
 	<style type="text/css">
 		body {
