@@ -1,0 +1,109 @@
+<body id="body-id">
+	<!-- <main id="gameCanvas"> -->
+
+		<!-- <canvas id="gameCanvas"></canvas>
+		<div id="gameStartDiv" class="gameUI"> -->
+
+		 <!-- <div class="">
+			<h1 class="" style="color: white;" >Star Collector</h1>
+			<p style="color: white;" >Collect all the Stars using the Code Provided Below.</p>
+			<h1> USE THE FOLLOWING PREDEFINED METHODS TO COLLECT ALL THE STARS  </h1>
+			<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+			  <h5 style="background-color: lightgray; padding: 10px; margin: 0;">Left <span style="font-size: 12px;">To Move Left</span></h5>
+			  <h5 style="background-color: lightgray; padding: 10px; margin: 0;">Right <span style="font-size: 12px;">To Move Right</span></h5>
+			  <h5 style="background-color: lightgray; padding: 10px; margin: 0;">Jump <span style="font-size: 12px;">To Move Jump </span></h5>
+			  <h5 style="background-color: lightgray; padding: 10px; margin: 0;">Left(4) <span style="font-size: 12px;">To Move Left 4 times</span></h5>
+			  <h5 style="background-color: lightgray; padding: 10px; margin: 0;">Right(4) <span style="font-size: 12px;">To Move Right 4 times</span></h5>
+			  <h5 style="background-color: lightgray; padding: 10px; margin: 0;">Jump(4) <span style="font-size: 12px;">To Move Jump 4 times</span></h5>
+		 </div>
+		  </div> -->
+
+		  <!-- <button id="gameStartBtn"><p>Start Game</p></button> -->
+		</div>
+		<div id="gameEndDiv" class="gameUI">
+		  <p>Game Over</p>
+		  <h1>You <span id="gameWinLoseSpan"></span></h1>
+		  <h1>Final Score: <span id="gameEndScoreSpan"></span></h1>
+		  <p>Refresh the Page to play again</p>
+		</div>
+		</div>
+	<!-- </main> -->
+
+	<!-- <div id="app">
+		<button style="position: absolute; top: 0; right: 0;">Button</button>
+		</div> -->
+	<style type="text/css">
+		body {
+		  box-shadow: 0 0 50px #eee;
+		  padding: 20px;
+		  background: #fff;
+		}
+  
+		.CodeMirror {
+		  height: 85%; /* Adjust the height as needed */
+		  width: 35%;
+		  margin:1.5rem;
+		  position: absolute;
+		  top: 0;
+		  right: 0;
+		  border: 1px solid #ccc;
+		  font-size: 14px;
+		}
+
+		.CodeMirror{
+			display: none;
+		}
+  
+		html {
+		  background: #fafafa;
+		}
+	  </style>
+	<script type="module" src="src/main.js"></script>
+	<!-- <script src="https://unpkg.com/intro.js/intro.js"></script> -->
+
+	<script>
+		document.querySelector('#gameStartBtn').addEventListener('click', function() {
+		intro.next();
+		intro.exit();
+	  	});
+	  </script>
+
+	  <script>
+		var selectedButton = document.getElementById('#runButton');
+		selectedButton.addEventListener('click', function() {
+		// Perform operations when the button is clicked
+		console.log('Button clicked!');
+		// Add your desired operations here
+		});
+	  </script>
+
+	<script>
+		var intro = introJs().setOptions({
+			steps: [
+			{	
+				element: document.querySelector('#runButton'),
+				intro: "Let us Guide you so you can understand the Game more !"
+			}, 
+			{
+				element: document.querySelector('#gameStartBtn'),
+				intro: "Click here to Start Game!"
+			},
+			{
+				element: document.querySelector('#editor'),
+				intro: " Write Move.Right() On the Code Editor "
+			},
+			{
+				element: document.querySelector('#runButton'),
+				intro: " Click Run to Execute the Game "
+			}
+		]
+			})
+
+			intro.start();
+			
+			document.querySelector('#gameStartBtn').addEventListener('click', function() {
+				intro.goToStep(3)
+			});
+
+	</script>
+</body>

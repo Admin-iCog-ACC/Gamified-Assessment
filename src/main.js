@@ -5,14 +5,20 @@ import Phaser from "phaser";
 import CodeMirror from "codemirror";
 import GameOver from "./GameoverScene";
 // @ts-ignore
-import StartMenu from "./StartgameScene"
 import "../styles.css";
 
+// Create a link element
+var link = document.createElement("link");
+link.rel = "stylesheet";
+link.href = "https://unpkg.com/intro.js/introjs.css";
+
+// Append the link element to the head section
+document.head.appendChild(link);
 
 // const gameStartDiv = document.querySelector("#gameStartDiv")
 // @ts-ignore
-const gameStartDiv = document.getElementById("gameStartDiv") ;
-const gameStartBtn = document.querySelector('#gameStartBtn')
+const gameStartDiv = document.getElementById("gameStartDiv");
+const gameStartBtn = document.querySelector("#gameStartBtn");
 const body = document.querySelector("body");
 // body.style.backgroundColor = "black";
 body.style.zIndex = "10";
@@ -21,11 +27,9 @@ var overlay = document.createElement("div");
 overlay.classList.add("overlay");
 document.documentElement.appendChild(overlay);
 
-
-
-
 import ScoreLabel from "./ui/ScoreLabel";
 import BombSpawner from "./BombSpawner";
+import CountdownController from "./CountDownController";
 // import createTextEditorPage from "./ui/"
 
 // @ts-ignore
@@ -36,8 +40,7 @@ const BOMB_KEY = "bomb";
 
 // console.log(inputs)
 
-
- class GameScene extends Phaser.Scene {
+class GameScene extends Phaser.Scene {
   constructor() {
     super("game-scene");
 
@@ -79,11 +82,8 @@ const BOMB_KEY = "bomb";
     this.load.audio("backgroundMusic", "assets/background-music.mp3");
   }
 
- 
-
   create() {
-
-    this.scene.pause("game-scene")
+    this.scene.pause("game-scene");
     this.add.image(400, 300, "sky");
 
     //  Creating Platforms , players , stars , ScoreLabels
@@ -100,6 +100,13 @@ const BOMB_KEY = "bomb";
     this.physics.add.collider(this.player, platforms);
     this.physics.add.collider(this.stars, platforms);
     this.physics.add.collider(bombsGroup, platforms);
+
+    // const timerLabel = this.add
+    //   .text(50, 50, "45", { fontSize: "48" })
+    //   .setOrigin(0.5);
+
+    // this.countdown = new CountdownController(this, timerLabel);
+    // this.countdown.start(this.handleCountdownFinished.bind(this));
 
     // this.physics.add.collider(
     //   this.player,
@@ -135,13 +142,12 @@ const BOMB_KEY = "bomb";
       },
     });
 
-    // this.backgroundMusic.play();
+    this.backgroundMusic.play();
 
     // Enable button interactivity
     button.setInteractive();
 
     button.on("pointerdown", this.onButtonClick, this);
-
 
     var domButton = document.getElementById("runButton");
     domButton.addEventListener("click", function () {
@@ -152,95 +158,24 @@ const BOMB_KEY = "bomb";
     // // Add button click event listener
   }
 
-  // jump(jumpCount = 1) {
-  //   if (this.player && this.player.body) {
-  //     var speed = -300;
-  //     var duration = 170;
+  handleCountdownFinished() {
+    this.player.active = false;
+    this.player.setVelocity(0, 0);
 
-  //     this.sound.play("jump");
+    const { width, height } = this.scale;
 
-  //     this.player.setVelocityY(speed);
-  //     this.player.anims.play("turn", true);
+    this.add.rectangle(width * 0.5, height * 0.5, 400, 400, 0xffffff);
 
-  //     // Setting the timeout after seconds
-  //     setTimeout(() => {
-  //       this.player.setVelocityY(0);
-  //     }, duration);
-  //   }
-  // }
+    const newFontSize = 48 * 5;
 
-  jump(jumpCount = 1) {
-    if (this.player && this.player.body) {
-      var speed = -300;
-      var jumpDelay = 170; // Delay between each jump in milliseconds
+    // this.add
+    //   // @ts-ignore
+    //   .text(width * 0.5, height * 0.5, "You Lose!")
+    //   .setOrigin(0.5);
 
-      const jump = (count) => {
-        if (count <= 0) {
-          return;
-        }
-
-        this.sound.play("jump");
-        this.player.setVelocityY(speed);
-        this.player.anims.play("turn", true);
-
-        setTimeout(() => {
-          this.player.setVelocityY(0);
-          jump(count - 1); // Call the jump function recursively with a decreased count
-        }, jumpDelay);
-      };
-
-      jump(jumpCount);
-    }
-  }
-
-  righty(jumpCount = 1) {
-    if (this.player && this.player.body) {
-      var speed = 300;
-      var jumpDelay = 200; // Delay between each jump in milliseconds
-
-      // Recursive helper function to handle the jumps
-      const jump = (count) => {
-        if (count <= 0) {
-          return;
-        }
-
-        this.sound.play("right-left");
-        this.player.setVelocityX(speed);
-        this.player.anims.play("right", true);
-
-        setTimeout(() => {
-          this.player.setVelocityX(0);
-          jump(count - 1); // Call the jump function recursively with a decreased count
-        }, jumpDelay);
-      };
-
-      jump(jumpCount);
-    }
-  }
-
-  lefty(jumpCount = 1) {
-    if (this.player && this.player.body) {
-      var speed = -300;
-      var jumpDelay = 200; // Delay between each jump in milliseconds
-
-      // Recursive helper function to handle the jumps
-      const jump = (count) => {
-        if (count <= 0) {
-          return;
-        }
-
-        this.sound.play("right-left");
-        this.player.setVelocityX(speed);
-        this.player.anims.play("left", true);
-
-        setTimeout(() => {
-          this.player.setVelocityX(0);
-          jump(count - 1); // Call the jump function recursively with a decreased count
-        }, jumpDelay);
-      };
-
-      jump(jumpCount);
-    }
+    this.add
+      .text(width * 0.5, height * 0.5, "You Lose!", { fontSize: "48" })
+      .setOrigin(0.5);
   }
 
   onButtonClick() {
@@ -414,7 +349,94 @@ const BOMB_KEY = "bomb";
       // Reset the flag after executing the logic
       this.isButtonClicked = false;
     }
+
+    // this.countdown.update();
   }
+
+
+
+
+
+
+
+
+
+
+
+  jump(jumpCount = 1) {
+    if (this.player && this.player.body) {
+      var speed = -300;
+      var jumpDelay = 170; // Delay between each jump in milliseconds
+
+      const jump = (count) => {
+        if (count <= 0) {
+          return;
+        }
+
+        this.sound.play("jump");
+        this.player.setVelocityY(speed);
+        this.player.anims.play("turn", true);
+
+        setTimeout(() => {
+          this.player.setVelocityY(0);
+          jump(count - 1); // Call the jump function recursively with a decreased count
+        }, jumpDelay);
+      };
+
+      jump(jumpCount);
+    }
+  }
+
+  righty(jumpCount = 1) {
+    if (this.player && this.player.body) {
+      var speed = 300;
+      var jumpDelay = 200; // Delay between each jump in milliseconds
+
+      // Recursive helper function to handle the jumps
+      const jump = (count) => {
+        if (count <= 0) {
+          return;
+        }
+
+        this.sound.play("right-left");
+        this.player.setVelocityX(speed);
+        this.player.anims.play("right", true);
+
+        setTimeout(() => {
+          this.player.setVelocityX(0);
+          jump(count - 1); // Call the jump function recursively with a decreased count
+        }, jumpDelay);
+      };
+
+      jump(jumpCount);
+    }
+  }
+
+  lefty(jumpCount = 1) {
+    if (this.player && this.player.body) {
+      var speed = -300;
+      var jumpDelay = 200; // Delay between each jump in milliseconds
+
+      // Recursive helper function to handle the jumps
+      const jump = (count) => {
+        if (count <= 0) {
+          return;
+        }
+
+        this.sound.play("right-left");
+        this.player.setVelocityX(speed);
+        this.player.anims.play("left", true);
+
+        setTimeout(() => {
+          this.player.setVelocityX(0);
+          jump(count - 1); // Call the jump function recursively with a decreased count
+        }, jumpDelay);
+      };
+
+      jump(jumpCount);
+    }
+  }
+
 
   // Creating the Movement Functions
   moveLeft() {
@@ -429,12 +451,6 @@ const BOMB_KEY = "bomb";
     this.player.setVelocityX(-160);
     this.player.anims.play("right", true);
   }
-
-  // // Jump function
-  // jump() {
-  //   this.player.setVelocityY(-330);
-  //   console.log("jumpping")
-  // }
 
   // Creating the Ground Platform
   createPlatforms() {
@@ -537,7 +553,6 @@ const BOMB_KEY = "bomb";
 
 const gameScene = new GameScene();
 
-
 const config = {
   type: Phaser.AUTO,
   width: 800,
@@ -548,7 +563,7 @@ const config = {
       gravity: { y: 300 },
     },
   },
-  scene: [  GameScene , GameOver , ],
+  scene: [GameScene, GameOver],
 };
 
 // @ts-ignore
@@ -564,11 +579,13 @@ function createTextEditorPage() {
   // Create the "Run Code" button
   var button = document.createElement("button");
   button.textContent = "Run Code";
-  button.style.width = "20%";
+  button.style.width = "15%";
   button.style.position = "absolute";
-  button.style.backgroundColor = "slate"
+  button.style.backgroundColor = "slate";
   button.style.bottom = "0";
   button.style.marginBottom = "3rem";
+  button.style.marginRight = "3rem";
+
   button.style.right = "0";
   button.style.height = "4rem";
   button.style.marginTop = "4rem";
@@ -591,18 +608,18 @@ function createTextEditorPage() {
     }
   );
 
-//   // Get a reference to the DOM button
-// const domButton = document.getElementById('domButton');
+  //   // Get a reference to the DOM button
+  // const domButton = document.getElementById('domButton');
 
-// // Add a click event listener to the DOM button
-// domButton.addEventListener('click', function() {
-//   // Trigger the click event on the Phaser button
-//   button.emit('pointerdown');
-// });
+  // // Add a click event listener to the DOM button
+  // domButton.addEventListener('click', function() {
+  //   // Trigger the click event on the Phaser button
+  //   button.emit('pointerdown');
+  // });
 
   function runCode() {
     // @ts-ignore
-    const test = 10 
+    const test = 10;
     gameScene.jumpFlag = true; // Set the jumpFlag property of the gameScene object to true when the button is clicked
 
     gameScene.jump();
@@ -611,40 +628,39 @@ function createTextEditorPage() {
     const code = editor.getValue();
     const inputArray = code.split("\n");
 
-    console.log(inputArray)
+    console.log(inputArray);
 
     const inputString = JSON.stringify(inputArray);
 
     // Store the data in the local storage
     localStorage.setItem("myinput", inputString);
 
-  //   <script>
+    //   <script>
 
-  //   const domButton = document.getElementById('domButton');
-  //   domButton.addEventListener('click', function() {
-  //     button.emit('pointerdown');
-  //   });
+    //   const domButton = document.getElementById('domButton');
+    //   domButton.addEventListener('click', function() {
+    //     button.emit('pointerdown');
+    //   });
 
-  // </script>
-
+    // </script>
 
     // gameScene.jump(input);
 
-//     for (let i = 0; i < input.length; i++) {
-//       if (lines[i] === "jump") {
-//         // gameScene.jump(lines)
-        
-//       } else if (lines[i] === "moveLeft") {
-//         gameScene.moveLeft(lines)
+    //     for (let i = 0; i < input.length; i++) {
+    //       if (lines[i] === "jump") {
+    //         // gameScene.jump(lines)
 
-//       } else if (lines[i] === "moveRight") {
-//         gameScene.moveRight(lines)
+    //       } else if (lines[i] === "moveLeft") {
+    //         gameScene.moveLeft(lines)
 
-//         console.log("Moving right!");
-//       } else {
-// console.log("Error Code , Please Insert a correct method ")
-//       }
-//     }
+    //       } else if (lines[i] === "moveRight") {
+    //         gameScene.moveRight(lines)
+
+    //         console.log("Moving right!");
+    //       } else {
+    // console.log("Error Code , Please Insert a correct method ")
+    //       }
+    //     }
 
     // console.log(lines);
   }
@@ -654,7 +670,10 @@ createTextEditorPage();
 
 const game = new Phaser.Game(config);
 
-gameStartBtn.addEventListener("click" , () => {
-  gameStartDiv.style.display = "none"
-  game.scene.resume("game-scene")
-})
+gameStartBtn.addEventListener("click", () => {
+  gameStartDiv.style.display = "none";
+  // var canvas = document.getElementById("canvas");
+
+  // canvas.style.display = "block";
+  game.scene.resume("game-scene");
+});
