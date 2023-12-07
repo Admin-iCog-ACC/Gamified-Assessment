@@ -40,9 +40,55 @@ const BOMB_KEY = "bomb";
 
 // console.log(inputs)
 
+
+class Laser extends Phaser.Physics.Arcade.Sprite
+{
+	constructor(scene, x, y) {
+		super(scene, x, y, 'laser');
+	}
+
+	fire(x, y) {
+		this.body.reset(x, y);
+
+		this.setActive(true);
+		this.setVisible(true);
+
+		this.setVelocityX(-500);
+	}
+}
+
+class LaserGroup extends Phaser.Physics.Arcade.Group
+{
+	constructor(scene) {
+		super(scene.physics.world, scene);
+
+		this.createMultiple({
+			frameQuantity: 3000,
+			key: 'laser',
+			active: false,
+			visible: false,
+			classType: Laser
+		});
+	}
+
+	fireBullet(x, y) {
+		const laser = this.getFirstDead(false);
+
+		if(laser) {
+			laser.fire(x, y);
+		}
+	}
+}
+
+
 class GameScene extends Phaser.Scene {
   constructor() {
     super("game-scene");
+    
+    // Shooitng Functionlity
+    this.ship;
+		this.laserGroup;
+		this.inputKeys;
 
     this.player = undefined;
     this.cursors = undefined;
@@ -70,6 +116,11 @@ class GameScene extends Phaser.Scene {
     this.load.image(STAR_KEY, "assets/star.png");
     this.load.image(BOMB_KEY, "assets/bomb.png");
 
+    // Loading Shooting Functionlity 
+    this.load.image("laser", "assets/laserBlue02.png");
+    this.load.image("GROUND_KEY", "assets/playerShip1_red.png");
+
+
     this.load.audio("collectstar", "assets/pepSound1.ogg");
 
     this.load.spritesheet(DUDE_KEY, "assets/dude.png", {
@@ -80,10 +131,13 @@ class GameScene extends Phaser.Scene {
     this.load.audio("right-left", "assets/pepSound1.ogg");
     this.load.audio("jump", "assets/phaseJump3.ogg");
     this.load.audio("backgroundMusic", "assets/background-music.mp3");
+
+
+
   }
 
   create() {
-    this.scene.pause("game-scene");
+    // this.scene.pause("game-scene");
     this.add.image(400, 300, "sky");
 
     //  Creating Platforms , players , stars , ScoreLabels
@@ -100,6 +154,13 @@ class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.player, platforms);
     this.physics.add.collider(this.stars, platforms);
     this.physics.add.collider(bombsGroup, platforms);
+
+    // Create Shooting Part
+      this.laserGroup = new LaserGroup(this);
+
+      this.addShip();
+      this.addEvents();
+
 
     // const timerLabel = this.add
     //   .text(50, 50, "45", { fontSize: "48" })
@@ -177,6 +238,30 @@ class GameScene extends Phaser.Scene {
       .text(width * 0.5, height * 0.5, "You Lose!", { fontSize: "48" })
       .setOrigin(0.5);
   }
+  
+  addShip() {
+		const centerX = this.cameras.main.width / 2;
+		const bottom = this.cameras.main.height;
+		this.ship = this.add.image(centerX, bottom - 150, 'ship');
+	}
+
+	addEvents() {
+
+		// Clicking the mouse should fire a bullet
+		this.input.on('pointerdown', (pointer) => {
+			this.fireBullet();
+		});
+
+		// Firing bullets should also work on enter / spacebar press
+		this.inputKeys = [
+			this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
+			this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
+		];
+	}
+
+	fireBullet() {
+		this.laserGroup.fireBullet(this.ship.x, this.ship.y - 20);
+	}
 
   onButtonClick() {
     // Set the flag when the button is clicked
@@ -187,6 +272,13 @@ class GameScene extends Phaser.Scene {
     if (this.gameOver) {
       return;
     }
+
+    this.inputKeys.forEach(key => {
+			// Check if the key was just pressed, and if so -> fire the bullet
+			if(Phaser.Input.Keyboard.JustDown(key)) {
+				this.fireBullet();
+			}
+		});
 
     if (this.isButtonClicked) {
       let index = 0;
@@ -203,6 +295,10 @@ class GameScene extends Phaser.Scene {
         if (index < retrievedDataArray.length) {
           const currentString = retrievedDataArray[index];
           console.log("Processing:", currentString);
+
+          if(currentString === 'shoot'){
+            this.fireBullet();
+          }
 
           if (currentString === "right()") {
             this.righty(); // Access class method using `this`
@@ -672,6 +768,8 @@ const game = new Phaser.Game(config);
 
 gameStartBtn.addEventListener("click", () => {
   gameStartDiv.style.display = "none";
+
+  console.log("Start Game Clicked")
   // var canvas = document.getElementById("canvas");
 
   // canvas.style.display = "block";
