@@ -82,12 +82,14 @@ canvas{
 }
 
 .CodeMirror {
- /* display: none; */
+ display: none;
 }
 
 #runButton{
-  /* display: none; */
+  display: none;
 }
+
+
 
 #gameStartDiv{
   /* display: none; */

@@ -53,7 +53,7 @@ class Laser extends Phaser.Physics.Arcade.Sprite
 		this.setActive(true);
 		this.setVisible(true);
 
-		this.setVelocityX(-500);
+		this.setVelocityX(1500);
 	}
 }
 
@@ -240,7 +240,7 @@ class GameScene extends Phaser.Scene {
   }
   
   addShip() {
-		const centerX = this.cameras.main.width / 2;
+		const centerX = this.cameras.main.width ;
 		const bottom = this.cameras.main.height;
 		this.ship = this.add.image(centerX, bottom - 150, 'ship');
 	}
@@ -260,7 +260,7 @@ class GameScene extends Phaser.Scene {
 	}
 
 	fireBullet() {
-		this.laserGroup.fireBullet(this.ship.x, this.ship.y - 20);
+		this.laserGroup.fireBullet(this.player.x, this.player.y );
 	}
 
   onButtonClick() {

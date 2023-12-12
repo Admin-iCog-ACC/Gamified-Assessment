@@ -41,6 +41,19 @@
 		</div>
 	<!-- </main> -->
 
+	<script>
+		document.getElementById("gameStartBtn").addEventListener("click", function() {
+		var codeMirrorElement = document.querySelector(".CodeMirror");
+		if (codeMirrorElement) {
+			codeMirrorElement.style.display = "block";
+		}
+		});
+
+		// var runButtonElement = document.querySelector(".runButton");
+  		// if (runButtonElement) {
+    	// 	runButtonElement.style.display = "block";}
+	</script>
+
 	<!-- <script>
 		const canvas = document.getElementById('canvas');
 		const codeeditor = document.getElementById('CodeMirror');
