@@ -53,6 +53,8 @@ class Laser extends Phaser.Physics.Arcade.Sprite {
     this.setVisible(true);
 
     this.setVelocityX(1500);
+    
+
   }
 }
 
@@ -61,7 +63,7 @@ class LaserGroup extends Phaser.Physics.Arcade.Group {
     super(scene.physics.world, scene);
 
     this.createMultiple({
-      frameQuantity: 3000,
+      frameQuantity: 5,
       key: "laser",
       active: false,
       visible: false,
@@ -74,13 +76,8 @@ class LaserGroup extends Phaser.Physics.Arcade.Group {
 
     if (laser) {
       laser.fire(x, y);
-      this.currentBullet = laser; // Assign the fired bullet to currentBullet
-
-      // Perform overlap check with enemy character
-      // this.scene.physics.overlap(this.currentBullet, this.scene.enemy3, this.enemyCollect, null, this);
-
-      this.scene.currentBullet = laser; // Assign the fired bullet to currentBullet
     }
+    return laser;
   }
 }
 
@@ -118,7 +115,7 @@ class GameScene extends Phaser.Scene {
     this.load.image("sky", "assets/space-pic.jpg");
     this.load.image("GROUND_KEY", "assets/platform.png");
     this.load.image(STAR_KEY, "assets/star.png");
-    this.load.image(BOMB_KEY, "assets/bomb.png");
+    this.load.image(BOMB_KEY, "assets/wolf.jpg");
     this.load.image("enemy", "assets/blue.png");
 
     // Loading Shooting Functionlity
@@ -145,7 +142,7 @@ class GameScene extends Phaser.Scene {
     // this.enemy2 =  this.physics.add.sprite(600, 400, 'enemy').setScale(.6);
 
     // Create the enemy sprite
-    this.enemy3 = this.physics.add.sprite(150, 500, "enemy").setScale(0.6);
+    this.enemy3 = this.physics.add.sprite(350, 500, "enemy").setScale(0.6);
 
     //  Creating Platforms , players , stars , ScoreLabels
     const platforms = this.createPlatforms();
@@ -156,6 +153,10 @@ class GameScene extends Phaser.Scene {
 
     this.bombSpawner = new BombSpawner(this, BOMB_KEY);
     const bombsGroup = this.bombSpawner.group;
+
+    const gameScene = new GameScene();
+
+    const laserGroup = new LaserGroup(this);
 
     // Adding Colliders
     // @ts-ignore
@@ -173,64 +174,64 @@ class GameScene extends Phaser.Scene {
     this.addShip();
     this.addEvents();
 
-    // const timerLabel = this.add
-    //   .text(50, 50, "45", { fontSize: "48" })
-    //   .setOrigin(0.5);
+    const timerLabel = this.add
+      .text(50, 50, "45", { fontSize: "48" })
+      .setOrigin(0.5);
 
-    // this.countdown = new CountdownController(this, timerLabel);
-    // this.countdown.start(this.handleCountdownFinished.bind(this));
+    this.countdown = new CountdownController(this, timerLabel);
+    this.countdown.start(this.handleCountdownFinished.bind(this));
 
-    // this.physics.add.collider(
-    //   this.player,
-    //   bombsGroup,
-    //   this.hitBomb,
-    //   null,
-    //   this
+    //  Overlap Detection
+    this.laserGroup = new LaserGroup(this);
+    const lasers = this.laserGroup.getChildren();
 
-    //   // createTextEditorPage();
-    // );
+    console.log(lasers)
+
+    // lasers.forEach(laser => {
+    //   // Check for overlap with another object (e.g., player or enemy)
+    //   console.log("overlap")
+    //   this.physics.overlap(this.player, this.stars, this.collectEnemy, null, this);
+    // });
+
+
+    this.physics.add.overlap(
+      // @ts-ignore
+      lasers,
+      this.enemy3,
+      this.collectEnemy,
+      null,
+      this
+    );
+
+  // Overlap B/n Player and Star
+    this.physics.add.overlap(
+      // @ts-ignore
+      this.player,
+      this.stars,
+      this.collectStar,
+      null,
+      this
+    );
+
+
+    // Perform overlap check with enemy character
+    this.physics.overlap(
+      this.laserGroup,
+      this.enemy3,
+      this.collectEnemy,
+      null,
+      this
+    );
+
+    this.physics.add.collider(
+      this.player,
+      bombsGroup,
+      this.hitBomb,
+      null,
+      this
+    );
 
     // Overlap B/n Player and Star
-
-    console.log("current Bullet", this.currentBullet);
-if (this.currentBullet) {
-    console.log(this.currentBullet.constructor.name);
-} else {
-    console.log("this.currentBullet is null");
-}
-
-if (this.player) {
-    console.log(this.player.constructor.name);
-} else {
-    console.log("player is null");
-}
-
-if (this.enemy3) {
-    console.log(this.enemy3.constructor.name);
-} else {
-    console.log("enemy is null");
-}
-
-    // if (this.currentBullet) {
-    //   console.log("Inside the overlap functionality");
-    //   this.physics.add.overlap(
-    //     this.currentBullet,
-    //     this.enemy1,
-    //     this.collectEnemy,
-    //     null,
-    //     this
-    //   );
-    // }
-
-    // Overlap Detection between Bullet and Enemy
-    // this.physics.add.overlap(
-    //   // @ts-ignore
-    //   this.currentBullet.x,
-    //   this.enemy1,
-    //   this.collectEnemy,
-    //   null,
-    //   this
-    // );
 
     this.backgroundMusic = this.sound.add("backgroundMusic", { loop: true });
 
@@ -318,9 +319,6 @@ if (this.enemy3) {
     // console.log(typeof this.currentBullet);
     // console.log(typeof this.player);
     // console.log(typeof this.enemy3);
-
-
- 
 
     this.inputKeys.forEach((key) => {
       // Check if the key was just pressed, and if so -> fire the bullet
@@ -574,7 +572,7 @@ if (this.enemy3) {
 
   // Creating the Movement Functions
   moveLeft() {
-    console.log("Left Working");
+    // console.log("Left Working");
     if (this.player) {
       return this.player.setVelocityX(-800);
     }
@@ -649,12 +647,12 @@ if (this.enemy3) {
     // this.bombSpawner.spawn(player.x);
   }
 
-  collectEnemy(player, enemy3) {
+  collectEnemy(laser, enemy3) {
     console.log("Bullet - Enemy Collision Working");
     // this.sound.play("collectstar");
-
-    // enemy3.disableBody(true, true);
-    this.scoreLabel.add(100);
+    this.scoreLabel.add(2000);
+    enemy3.disableBody(true, true);
+    // this.scoreLabel.add(100);
   }
 
   // Creating the Player and Animation characterstics
