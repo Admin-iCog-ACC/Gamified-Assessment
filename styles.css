@@ -82,7 +82,7 @@ canvas{
 }
 
 .CodeMirror {
- display: none;
+ /* display: none; */
 }
 
 #runButton{
@@ -92,7 +92,7 @@ canvas{
 
 
 #gameStartDiv{
-  /* display: none; */
+  display: none;
 }
 
 /* .overlay {

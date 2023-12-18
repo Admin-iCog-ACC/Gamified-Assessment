@@ -53,8 +53,6 @@ class Laser extends Phaser.Physics.Arcade.Sprite {
     this.setVisible(true);
 
     this.setVelocityX(1500);
-    
-
   }
 }
 
@@ -63,7 +61,7 @@ class LaserGroup extends Phaser.Physics.Arcade.Group {
     super(scene.physics.world, scene);
 
     this.createMultiple({
-      frameQuantity: 5,
+      frameQuantity: 3000,
       key: "laser",
       active: false,
       visible: false,
@@ -98,6 +96,14 @@ class GameScene extends Phaser.Scene {
     this.stars = undefined;
     this.enemy1 = undefined;
     this.enemy2 = undefined;
+    this.enemy3=undefined;
+    this.enemy4=undefined;
+    this.star1 =undefined;
+    this.star2 =undefined;
+    this.star3 =undefined;
+    this.star4 =undefined;
+    this.star5 =undefined;
+    this.star6 =undefined;
     this.gameOver = false;
     this.jumpFlag = false;
     this.key = "";
@@ -109,18 +115,21 @@ class GameScene extends Phaser.Scene {
     this.delayDuration = 2000; // Delay duration in milliseconds
   }
 
+
   preload() {
     // this.scene.launch("StartMenu");
 
     this.load.image("sky", "assets/space-pic.jpg");
     this.load.image("GROUND_KEY", "assets/platform.png");
     this.load.image(STAR_KEY, "assets/star.png");
-    this.load.image(BOMB_KEY, "assets/wolf.jpg");
+    this.load.image(BOMB_KEY, "assets/bomb.png");
     this.load.image("enemy", "assets/blue.png");
 
-    // Loading Shooting Functionlity
+
+    // Loading Shooting Functionlity 
     this.load.image("laser", "assets/laserBlue02.png");
     this.load.image("GROUND_KEY", "assets/playerShip1_red.png");
+
 
     this.load.audio("collectstar", "assets/pepSound1.ogg");
 
@@ -132,109 +141,101 @@ class GameScene extends Phaser.Scene {
     this.load.audio("right-left", "assets/pepSound1.ogg");
     this.load.audio("jump", "assets/phaseJump3.ogg");
     this.load.audio("backgroundMusic", "assets/background-music.mp3");
+
+
+
   }
 
   create() {
     // this.scene.pause("game-scene");
-
     this.add.image(400, 300, "sky");
-    // this.enemy1 =  this.physics.add.sprite(700, 400, 'enemy').setScale(.6);
-    // this.enemy2 =  this.physics.add.sprite(600, 400, 'enemy').setScale(.6);
-
-    // Create the enemy sprite
-    this.enemy3 = this.physics.add.sprite(350, 500, "enemy").setScale(0.6);
 
     //  Creating Platforms , players , stars , ScoreLabels
     const platforms = this.createPlatforms();
     this.player = this.createPlayer();
-    this.stars = this.createStars();
-    // this.enemy = this.createEnemy();
+    // this.stars = this.createStars();
     this.scoreLabel = this.createScoreLabel(16, 16, 0);
+
+    
+    // Create the enemy sprite
+    this.enemy1 = this.physics.add.sprite(700, 100, "enemy").setScale(0.5);
+    this.enemy2 = this.physics.add.sprite(700, 350, "enemy").setScale(0.5);
+    this.enemy3 = this.physics.add.sprite(450, 500, "enemy").setScale(0.5);
+    this.enemy4 = this.physics.add.sprite(150, 100, "enemy").setScale(0.5);
+
+    this.star1 = this.physics.add.sprite(750,50,STAR_KEY)
+    this.star2 = this.physics.add.sprite(700,350,STAR_KEY)
+    this.star3 = this.physics.add.sprite(600,400,STAR_KEY)
+    this.star4 = this.physics.add.sprite(50,100,STAR_KEY)
 
     this.bombSpawner = new BombSpawner(this, BOMB_KEY);
     const bombsGroup = this.bombSpawner.group;
 
-    const gameScene = new GameScene();
-
-    const laserGroup = new LaserGroup(this);
-
     // Adding Colliders
     // @ts-ignore
     this.physics.add.collider(this.player, platforms);
-    this.physics.add.collider(this.stars, platforms);
-    // this.physics.add.collider(this.enemy1, platforms);
-    // this.physics.add.collider(this.enemy2, platforms);
-    this.physics.add.collider(this.enemy3, platforms);
-
+    // this.physics.add.collider(this.stars, platforms);
     this.physics.add.collider(bombsGroup, platforms);
 
+    this.physics.add.collider(this.enemy1, platforms);
+    this.physics.add.collider(this.enemy2, platforms);
+    this.physics.add.collider(this.enemy3, platforms);
+    this.physics.add.collider(this.enemy4, platforms);
+    this.physics.add.collider(this.star1, platforms);
+    this.physics.add.collider(this.star2, platforms);
+    this.physics.add.collider(this.star3, platforms);
+    this.physics.add.collider(this.star4, platforms);
+
     // Create Shooting Part
-    this.laserGroup = new LaserGroup(this);
+      this.laserGroup = new LaserGroup(this);
 
-    this.addShip();
-    this.addEvents();
-
-    const timerLabel = this.add
-      .text(50, 50, "45", { fontSize: "48" })
-      .setOrigin(0.5);
-
-    this.countdown = new CountdownController(this, timerLabel);
-    this.countdown.start(this.handleCountdownFinished.bind(this));
-
-    //  Overlap Detection
-    this.laserGroup = new LaserGroup(this);
-    const lasers = this.laserGroup.getChildren();
-
-    console.log(lasers)
-
-    // lasers.forEach(laser => {
-    //   // Check for overlap with another object (e.g., player or enemy)
-    //   console.log("overlap")
-    //   this.physics.overlap(this.player, this.stars, this.collectEnemy, null, this);
-    // });
+      this.addShip();
+      this.addEvents();
 
 
+    // const timerLabel = this.add
+    //   .text(50, 50, "45", { fontSize: "48" })
+    //   .setOrigin(0.5);
+
+    // this.countdown = new CountdownController(this, timerLabel);
+    // this.countdown.start(this.handleCountdownFinished.bind(this));
+
+    // this.physics.add.collider(
+    //   this.player,
+    //   bombsGroup,
+    //   this.hitBomb,
+    //   null,
+    //   this
+
+    //   // createTextEditorPage();
+    // );
+
+      //  Overlap Detection
+      this.laserGroup = new LaserGroup(this);
+      const lasers = this.laserGroup.getChildren();
+  
+    // Collision Detection between Lasers and Enemy 3
     this.physics.add.overlap(
       // @ts-ignore
       lasers,
-      this.enemy3,
+      [this.enemy3, this.enemy2, this.enemy1],
       this.collectEnemy,
-      null,
-      this
-    );
-
-  // Overlap B/n Player and Star
-    this.physics.add.overlap(
-      // @ts-ignore
-      this.player,
-      this.stars,
-      this.collectStar,
-      null,
-      this
-    );
-
-
-    // Perform overlap check with enemy character
-    this.physics.overlap(
-      this.laserGroup,
-      this.enemy3,
-      this.collectEnemy,
-      null,
-      this
-    );
-
-    this.physics.add.collider(
-      this.player,
-      bombsGroup,
-      this.hitBomb,
       null,
       this
     );
 
     // Overlap B/n Player and Star
+    this.physics.add.overlap(
+      // @ts-ignore
+      this.player,
+      [this.star1,this.star2,this.star3,this.star4,this.star5,this.star6],
+      this.collectStar,
+      null,
+      this
+    );
 
     this.backgroundMusic = this.sound.add("backgroundMusic", { loop: true });
-
+    //
     this.cursors = this.input.keyboard.createCursorKeys();
 
     const button = this.add.text(1000, 450, "Run Game", {
@@ -282,29 +283,30 @@ class GameScene extends Phaser.Scene {
       .text(width * 0.5, height * 0.5, "You Lose!", { fontSize: "48" })
       .setOrigin(0.5);
   }
-
+  
   addShip() {
-    const centerX = this.cameras.main.width;
-    const bottom = this.cameras.main.height;
-    this.ship = this.add.image(centerX, bottom - 150, "ship");
-  }
+		const centerX = this.cameras.main.width ;
+		const bottom = this.cameras.main.height;
+		this.ship = this.add.image(centerX, bottom - 150, 'ship');
+	}
 
-  addEvents() {
-    // Clicking the mouse should fire a bullet
-    this.input.on("pointerdown", (pointer) => {
-      this.fireBullet();
-    });
+	addEvents() {
 
-    // Firing bullets should also work on enter / spacebar press
-    this.inputKeys = [
-      this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
-      this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER),
-    ];
-  }
+		// Clicking the mouse should fire a bullet
+		this.input.on('pointerdown', (pointer) => {
+			this.fireBullet();
+		});
 
-  fireBullet() {
-    this.laserGroup.fireBullet(this.player.x, this.player.y);
-  }
+		// Firing bullets should also work on enter / spacebar press
+		this.inputKeys = [
+			this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
+			this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
+		];
+	}
+
+	fireBullet() {
+		this.laserGroup.fireBullet(this.player.x, this.player.y );
+	}
 
   onButtonClick() {
     // Set the flag when the button is clicked
@@ -316,16 +318,12 @@ class GameScene extends Phaser.Scene {
       return;
     }
 
-    // console.log(typeof this.currentBullet);
-    // console.log(typeof this.player);
-    // console.log(typeof this.enemy3);
-
-    this.inputKeys.forEach((key) => {
-      // Check if the key was just pressed, and if so -> fire the bullet
-      if (Phaser.Input.Keyboard.JustDown(key)) {
-        this.fireBullet();
-      }
-    });
+    this.inputKeys.forEach(key => {
+			// Check if the key was just pressed, and if so -> fire the bullet
+			if(Phaser.Input.Keyboard.JustDown(key)) {
+				this.fireBullet();
+			}
+		});
 
     if (this.isButtonClicked) {
       let index = 0;
@@ -343,7 +341,7 @@ class GameScene extends Phaser.Scene {
           const currentString = retrievedDataArray[index];
           console.log("Processing:", currentString);
 
-          if (currentString === "shoot") {
+          if(currentString === 'shoot'){
             this.fireBullet();
           }
 
@@ -496,6 +494,16 @@ class GameScene extends Phaser.Scene {
     // this.countdown.update();
   }
 
+
+
+
+
+
+
+
+
+
+
   jump(jumpCount = 1) {
     if (this.player && this.player.body) {
       var speed = -300;
@@ -570,9 +578,10 @@ class GameScene extends Phaser.Scene {
     }
   }
 
+
   // Creating the Movement Functions
   moveLeft() {
-    // console.log("Left Working");
+    console.log("Left Working");
     if (this.player) {
       return this.player.setVelocityX(-800);
     }
@@ -598,39 +607,22 @@ class GameScene extends Phaser.Scene {
     return platforms;
   }
 
-  createEnemy() {
-    const enemy = this.physics.add.group({
-      key: ENEMY,
-      repeat: 3,
-      setXY: { x: 12, y: 0, stepX: 60 },
-    });
+  // createStars() {
+  //   const stars = this.physics.add.group({
+  //     key: STAR_KEY,
+  //     repeat: 6,
+  //     setXY: { x: 12, y: 0, stepX: 70 },
+  //   });
 
-    enemy.children.iterate((c) => {
-      // Creating the Bounce Property when the Stars are created
-      // @ts-ignore
-      const child = /**@type {Phaser.Physics.Arcade.Sprite} */ (c);
-      child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.6));
-    });
+  //   stars.children.iterate((c) => {
+  //     // Creating the Bounce Property when the Stars are created
+  //     // @ts-ignore
+  //     const child = /**@type {Phaser.Physics.Arcade.Sprite} */ (c);
+  //     child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.6));
+  //   });
 
-    return enemy;
-  }
-
-  createStars() {
-    const stars = this.physics.add.group({
-      key: STAR_KEY,
-      repeat: 6,
-      setXY: { x: 12, y: 0, stepX: 75 },
-    });
-
-    stars.children.iterate((c) => {
-      // Creating the Bounce Property when the Stars are created
-      // @ts-ignore
-      const child = /**@type {Phaser.Physics.Arcade.Sprite} */ (c);
-      child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.6));
-    });
-
-    return stars;
-  }
+  //   return stars;
+  // }
 
   // When collecting stars the Stars should be removed from the screen
   // @ts-ignore
@@ -640,19 +632,18 @@ class GameScene extends Phaser.Scene {
     star.disableBody(true, true);
     this.scoreLabel.add(1000);
 
-    if (this.stars.countActive(true) === 0) {
-      this.scene.start("game-over", { title: "  You Won ! " });
-    }
+    // if (this.stars.countActive(true) === 0) {
+    //   this.scene.start("game-over", { title: "  You Won ! " });
+    // }
 
     // this.bombSpawner.spawn(player.x);
   }
 
   collectEnemy(laser, enemy3) {
     console.log("Bullet - Enemy Collision Working");
-    // this.sound.play("collectstar");
+    this.sound.play("collectstar");
     this.scoreLabel.add(2000);
     enemy3.disableBody(true, true);
-    // this.scoreLabel.add(100);
   }
 
   // Creating the Player and Animation characterstics
@@ -795,31 +786,7 @@ function createTextEditorPage() {
     //   <script>
 
     //   const domButton = document.getElementById('domButton');
-    //   domButton.addEventListener('click', function() {
-    //     button.emit('pointerdown');
-    //   });
-
-    // </script>
-
-    // gameScene.jump(input);
-
-    //     for (let i = 0; i < input.length; i++) {
-    //       if (lines[i] === "jump") {
-    //         // gameScene.jump(lines)
-
-    //       } else if (lines[i] === "moveLeft") {
-    //         gameScene.moveLeft(lines)
-
-    //       } else if (lines[i] === "moveRight") {
-    //         gameScene.moveRight(lines)
-
-    //         console.log("Moving right!");
-    //       } else {
-    // console.log("Error Code , Please Insert a correct method ")
-    //       }
-    //     }
-
-    // console.log(lines);
+   
   }
 }
 
@@ -830,7 +797,7 @@ const game = new Phaser.Game(config);
 gameStartBtn.addEventListener("click", () => {
   gameStartDiv.style.display = "none";
 
-  console.log("Start Game Clicked");
+  console.log("Start Game Clicked")
   // var canvas = document.getElementById("canvas");
 
   // canvas.style.display = "block";
