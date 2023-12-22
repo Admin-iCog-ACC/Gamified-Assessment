@@ -54,6 +54,15 @@ class Laser extends Phaser.Physics.Arcade.Sprite {
 
     this.setVelocityX(1500);
   }
+
+  fireLeft(x, y) {
+    this.body.reset(x, y);
+
+    this.setActive(true);
+    this.setVisible(true);
+
+    this.setVelocityX(-1500);
+  }
 }
 
 class LaserGroup extends Phaser.Physics.Arcade.Group {
@@ -77,6 +86,15 @@ class LaserGroup extends Phaser.Physics.Arcade.Group {
     }
     return laser;
   }
+
+  fireBulletLeft(x, y) {
+    const laser = this.getFirstDead(false);
+
+    if (laser) {
+      laser.fireLeft(x, y);
+    }
+    return laser;
+  }
 }
 
 class GameScene extends Phaser.Scene {
@@ -96,14 +114,16 @@ class GameScene extends Phaser.Scene {
     this.stars = undefined;
     this.enemy1 = undefined;
     this.enemy2 = undefined;
-    this.enemy3=undefined;
-    this.enemy4=undefined;
-    this.star1 =undefined;
-    this.star2 =undefined;
-    this.star3 =undefined;
-    this.star4 =undefined;
-    this.star5 =undefined;
-    this.star6 =undefined;
+    this.enemy3 = undefined;
+    this.enemy4 = undefined;
+    this.star1 = undefined;
+    this.star2 = undefined;
+    this.star3 = undefined;
+    this.star4 = undefined;
+    this.star5 = undefined;
+    this.star6 = undefined;
+    this.gamePiece = undefined;
+    this.mysprite = undefined;
     this.gameOver = false;
     this.jumpFlag = false;
     this.key = "";
@@ -115,7 +135,6 @@ class GameScene extends Phaser.Scene {
     this.delayDuration = 2000; // Delay duration in milliseconds
   }
 
-
   preload() {
     // this.scene.launch("StartMenu");
 
@@ -125,11 +144,17 @@ class GameScene extends Phaser.Scene {
     this.load.image(BOMB_KEY, "assets/bomb.png");
     this.load.image("enemy", "assets/blue.png");
 
+    const game = new GameScene();
 
-    // Loading Shooting Functionlity 
+    this.load.image("poo", "assets/poo.png");
+    this.load.spritesheet("mummy", "assets/mummy37x45.png", {
+      frameWidth: 37,
+      frameHeight: 45,
+    });
+
+    // Loading Shooting Functionlity
     this.load.image("laser", "assets/laserBlue02.png");
     this.load.image("GROUND_KEY", "assets/playerShip1_red.png");
-
 
     this.load.audio("collectstar", "assets/pepSound1.ogg");
 
@@ -141,9 +166,6 @@ class GameScene extends Phaser.Scene {
     this.load.audio("right-left", "assets/pepSound1.ogg");
     this.load.audio("jump", "assets/phaseJump3.ogg");
     this.load.audio("backgroundMusic", "assets/background-music.mp3");
-
-
-
   }
 
   create() {
@@ -156,17 +178,41 @@ class GameScene extends Phaser.Scene {
     // this.stars = this.createStars();
     this.scoreLabel = this.createScoreLabel(16, 16, 0);
 
-    
-    // Create the enemy sprite
-    this.enemy1 = this.physics.add.sprite(700, 100, "enemy").setScale(0.5);
-    this.enemy2 = this.physics.add.sprite(700, 350, "enemy").setScale(0.5);
-    this.enemy3 = this.physics.add.sprite(450, 500, "enemy").setScale(0.5);
-    this.enemy4 = this.physics.add.sprite(150, 100, "enemy").setScale(0.5);
+    // Animation
 
-    this.star1 = this.physics.add.sprite(750,50,STAR_KEY)
-    this.star2 = this.physics.add.sprite(700,350,STAR_KEY)
-    this.star3 = this.physics.add.sprite(600,400,STAR_KEY)
-    this.star4 = this.physics.add.sprite(50,100,STAR_KEY)
+    const mummyAnimation = this.anims.create({
+      key: "walk",
+      frames: this.anims.generateFrameNumbers("mummy", { start: 0, end: 10 }),
+      frameRate: 16,
+    });
+    
+    const sprite = this.add.sprite(50, 300, "mummy").setScale(1.2);
+    
+    sprite.play({ key: "walk", repeat: -1 });     
+    const distanceToWalk = 50; // Adjust this value to determine the distance to walk
+    
+    this.tweens.add({
+      targets: sprite,
+      x: sprite.x + distanceToWalk,
+      duration: 558800,
+      ease: "Linear",
+    });
+
+    // Create the enemy sprite
+    this.enemy1 = this.physics.add.sprite(700, 100, "mummy");
+    this.enemy2 = this.physics.add.sprite(700, 350, "mummy");
+    this.enemy3 = this.physics.add.sprite(450, 500, "mummy");
+    this.enemy4 = this.physics.add.sprite(150, 100, "mummy");
+
+    this.enemy1.play({ key: "walk", repeat: -1 });    
+    this.enemy2.play({ key: "walk", repeat: -1 });     
+    this.enemy3.play({ key: "walk", repeat: -1 });     
+    this.enemy4.play({ key: "walk", repeat: -1 });     
+
+    this.star1 = this.physics.add.sprite(750, 50, STAR_KEY);
+    this.star2 = this.physics.add.sprite(750, 350, STAR_KEY);
+    this.star3 = this.physics.add.sprite(600, 400, STAR_KEY);
+    this.star4 = this.physics.add.sprite(50, 100, STAR_KEY);
 
     this.bombSpawner = new BombSpawner(this, BOMB_KEY);
     const bombsGroup = this.bombSpawner.group;
@@ -187,11 +233,10 @@ class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.star4, platforms);
 
     // Create Shooting Part
-      this.laserGroup = new LaserGroup(this);
+    this.laserGroup = new LaserGroup(this);
 
-      this.addShip();
-      this.addEvents();
-
+    this.addShip();
+    this.addEvents();
 
     // const timerLabel = this.add
     //   .text(50, 50, "45", { fontSize: "48" })
@@ -210,10 +255,10 @@ class GameScene extends Phaser.Scene {
     //   // createTextEditorPage();
     // );
 
-      //  Overlap Detection
-      this.laserGroup = new LaserGroup(this);
-      const lasers = this.laserGroup.getChildren();
-  
+    //  Overlap Detection
+    this.laserGroup = new LaserGroup(this);
+    const lasers = this.laserGroup.getChildren();
+
     // Collision Detection between Lasers and Enemy 3
     this.physics.add.overlap(
       // @ts-ignore
@@ -224,11 +269,21 @@ class GameScene extends Phaser.Scene {
       this
     );
 
+    // Player and Enemy Ovelap
+    this.physics.add.overlap(
+      // @ts-ignore
+      this.player,
+      [this.enemy3, this.enemy2, this.enemy1],
+      this.deductPoints,
+      null,
+      this
+    );
+
     // Overlap B/n Player and Star
     this.physics.add.overlap(
       // @ts-ignore
       this.player,
-      [this.star1,this.star2,this.star3,this.star4,this.star5,this.star6],
+      [this.star1, this.star2, this.star3, this.star4, this.star5, this.star6],
       this.collectStar,
       null,
       this
@@ -283,30 +338,33 @@ class GameScene extends Phaser.Scene {
       .text(width * 0.5, height * 0.5, "You Lose!", { fontSize: "48" })
       .setOrigin(0.5);
   }
-  
+
   addShip() {
-		const centerX = this.cameras.main.width ;
-		const bottom = this.cameras.main.height;
-		this.ship = this.add.image(centerX, bottom - 150, 'ship');
-	}
+    const centerX = this.cameras.main.width;
+    const bottom = this.cameras.main.height;
+    this.ship = this.add.image(centerX, bottom - 150, "ship");
+  }
 
-	addEvents() {
+  addEvents() {
+    // Clicking the mouse should fire a bullet
+    this.input.on("pointerdown", (pointer) => {
+      this.fireBullet();
+    });
 
-		// Clicking the mouse should fire a bullet
-		this.input.on('pointerdown', (pointer) => {
-			this.fireBullet();
-		});
+    // Firing bullets should also work on enter / spacebar press
+    this.inputKeys = [
+      this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
+      this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER),
+    ];
+  }
 
-		// Firing bullets should also work on enter / spacebar press
-		this.inputKeys = [
-			this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
-			this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
-		];
-	}
+  fireBullet() {
+    this.laserGroup.fireBullet(this.player.x, this.player.y);
+  }
 
-	fireBullet() {
-		this.laserGroup.fireBullet(this.player.x, this.player.y );
-	}
+  fireBulletLeft() {
+    this.laserGroup.fireBulletLeft(this.player.x, this.player.y);
+  }
 
   onButtonClick() {
     // Set the flag when the button is clicked
@@ -318,164 +376,42 @@ class GameScene extends Phaser.Scene {
       return;
     }
 
-    this.inputKeys.forEach(key => {
-			// Check if the key was just pressed, and if so -> fire the bullet
-			if(Phaser.Input.Keyboard.JustDown(key)) {
-				this.fireBullet();
-			}
-		});
-
     if (this.isButtonClicked) {
       let index = 0;
-
-      // Execute logic when button is clicked
       let retrievedDataString = localStorage.getItem("myinput");
-
-      // Convert the string back to an array
       let retrievedDataArray = JSON.parse(retrievedDataString);
 
-      console.log(retrievedDataArray); // Output: ["apple", "banana", "orange"]
+      console.log(retrievedDataArray);
+      const lenArray = retrievedDataArray.length;
+      const functionCall = retrievedDataArray[lenArray - 1];
+      const firstElement = retrievedDataArray[0];
 
       const processNextElement = () => {
         if (index < retrievedDataArray.length) {
           const currentString = retrievedDataArray[index];
           console.log("Processing:", currentString);
 
-          if(currentString === 'shoot'){
-            this.fireBullet();
+          if (currentString.startsWith("def")) {
+            // User-defined function
+            const functionName = currentString.substring(4).trim();
+            const functionIndex = lenArray - 1;
+
+            if (functionIndex !== -1) {
+              const functionBody = retrievedDataArray.slice(
+                index + 1,
+                functionIndex
+              );
+              executeFunction(functionBody);
+              index = functionIndex + 1;
+            } else {
+              console.log(`Function enddef ${functionName} not found.`);
+            }
+          } else {
+            // Single action
+            executeAction(currentString);
+            index++;
           }
 
-          if (currentString === "right()") {
-            this.righty(); // Access class method using `this`
-          }
-
-          if (currentString === "right(2)") {
-            var number = currentString[6];
-            this.righty(number); // Access class method using `this`
-          }
-
-          if (currentString === "right(3)") {
-            var number = currentString[6];
-            this.righty(number); // Access class method using `this`
-          }
-
-          if (currentString === "right(4)") {
-            var number = currentString[6];
-            this.righty(number); // Access class method using `this`
-          }
-
-          if (currentString === "right(5)") {
-            var number = currentString[6];
-            this.righty(number); // Access class method using `this`
-          }
-
-          if (currentString === "right(6)") {
-            var number = currentString[6];
-            this.righty(number); // Access class method using `this`
-          }
-
-          if (currentString === "right(7)") {
-            var number = currentString[6];
-            this.righty(number); // Access class method using `this`
-          }
-
-          if (currentString === "left()") {
-            this.lefty();
-          }
-
-          if (currentString === "left(2)") {
-            var number = currentString[5];
-            this.lefty(number);
-          }
-
-          if (currentString === "left(3)") {
-            var number = currentString[5];
-            this.lefty(number);
-          }
-
-          if (currentString === "left(4)") {
-            var number = currentString[5];
-            this.lefty(number);
-          }
-
-          if (currentString === "left(5)") {
-            var number = currentString[5];
-            this.lefty(number);
-          }
-
-          if (currentString === "left(6)") {
-            var number = currentString[5];
-            this.lefty(number);
-          }
-
-          if (currentString === "left(7)") {
-            var number = currentString[5];
-            this.lefty(number);
-          }
-
-          if (currentString === "left(8)") {
-            var number = currentString[5];
-            this.lefty(number);
-          }
-
-          if (currentString === "left(9)") {
-            var number = currentString[5];
-            this.lefty(number);
-          }
-
-          if (currentString === "jump") {
-            this.jump();
-          }
-
-          if (currentString === "jump(2)") {
-            // @ts-ignore
-            var number = parseInt(currentString.slice(5));
-            this.jump(number);
-          }
-
-          if (currentString === "jump(3)") {
-            // @ts-ignore
-            var number = parseInt(currentString.slice(5));
-            this.jump(number);
-          }
-
-          if (currentString === "jump(4)") {
-            // @ts-ignore
-            var number = parseInt(currentString.slice(5));
-            this.jump(number);
-          }
-
-          if (currentString === "jump(5)") {
-            // @ts-ignore
-            var number = parseInt(currentString.slice(5));
-            this.jump(number);
-          }
-
-          if (currentString === "jump(6)") {
-            // @ts-ignore
-            var number = parseInt(currentString.slice(5));
-            this.jump(number);
-          }
-
-          if (currentString === "jump(7)") {
-            // @ts-ignore
-            var number = parseInt(currentString.slice(5));
-            this.jump(number);
-          }
-
-          if (currentString === "jump(8)") {
-            // @ts-ignore
-            var number = parseInt(currentString.slice(5));
-            this.jump(number);
-          }
-
-          if (currentString === "jump(9)") {
-            // @ts-ignore
-            var number = parseInt(currentString.slice(5));
-            this.jump(number);
-          }
-
-          index++;
           setTimeout(processNextElement, 1000);
         } else {
           console.log("All elements processed");
@@ -485,24 +421,65 @@ class GameScene extends Phaser.Scene {
         }
       };
 
-      processNextElement();
+      const executeAction = (action) => {
+        console.log("Executing action:", action);
+        const trimmedAction = action.trim();
+        if (trimmedAction === "player.shootRight()") {
+          this.fireBullet();
+        } else if (trimmedAction === "player.shootLeft") {
+          this.fireBulletLeft();
+        } else if (trimmedAction === "player.right()") {
+          this.righty();
+        } else if (trimmedAction === "player.right(2)") {
+          var number = trimmedAction[6];
+          this.righty(number);
+        } else if (trimmedAction === "player.right(3)") {
+          var number = trimmedAction[6];
+          this.righty(number);
+        } else if (trimmedAction === "player.left()") {
+          this.lefty();
+        } else if (trimmedAction === "player.left(2)") {
+          var number = trimmedAction[5];
+          this.lefty(number);
+        } else if (trimmedAction === "player.left(3)") {
+          var number = trimmedAction[5];
+          this.lefty(number);
+        } else if (trimmedAction === "player.left(4)") {
+          var number = trimmedAction[5];
+          this.lefty(number);
+        } else if (trimmedAction === "player.jump()") {
+          this.jump();
+        } else {
+          console.log("Unknown trimmedAction:", trimmedAction);
+        }
+      };
 
+      const executeFunction = (functionBody) => {
+        console.log("Executing function:", functionBody);
+
+        let i = 0; // Initialize the index
+
+        const executeNextAction = () => {
+          if (i < functionBody.length) {
+            const currentAction = functionBody[i];
+
+            executeAction(currentAction);
+
+            i++;
+
+            setTimeout(executeNextAction, 1000); // Delay each iteration by 2 seconds
+          }
+        };
+
+        executeNextAction();
+      };
+      processNextElement();
       // Reset the flag after executing the logic
       this.isButtonClicked = false;
     }
 
     // this.countdown.update();
   }
-
-
-
-
-
-
-
-
-
-
 
   jump(jumpCount = 1) {
     if (this.player && this.player.body) {
@@ -578,7 +555,6 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-
   // Creating the Movement Functions
   moveLeft() {
     console.log("Left Working");
@@ -644,6 +620,11 @@ class GameScene extends Phaser.Scene {
     this.sound.play("collectstar");
     this.scoreLabel.add(2000);
     enemy3.disableBody(true, true);
+  }
+
+  deductPoints(laser, enemy3) {
+    this.scoreLabel.add(-500);
+    this.player.setPosition(100, 400);
   }
 
   // Creating the Player and Animation characterstics
@@ -745,14 +726,20 @@ function createTextEditorPage() {
 
   // console.log(gameScene);
 
-  // Create the CodeMirror editor
   var editor = CodeMirror.fromTextArea(
     /** @type {HTMLTextAreaElement} */
     (document.getElementById("editor")),
     {
-      mode: "xml",
+      mode: "python",
       theme: "dracula",
       lineNumbers: true,
+      extraKeys: {
+        Space: function (cm) {
+          var cursor = cm.getCursor(); // Get the current cursor position
+          cm.replaceRange(" ", cursor); // Insert a space character at the cursor position
+        },
+        Enter: "newlineAndIndentContinueComment",
+      },
     }
   );
 
@@ -786,7 +773,6 @@ function createTextEditorPage() {
     //   <script>
 
     //   const domButton = document.getElementById('domButton');
-   
   }
 }
 
@@ -797,7 +783,7 @@ const game = new Phaser.Game(config);
 gameStartBtn.addEventListener("click", () => {
   gameStartDiv.style.display = "none";
 
-  console.log("Start Game Clicked")
+  console.log("Start Game Clicked");
   // var canvas = document.getElementById("canvas");
 
   // canvas.style.display = "block";

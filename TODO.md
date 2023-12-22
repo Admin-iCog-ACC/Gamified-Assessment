@@ -6,9 +6,8 @@ Project Description
 
 ### Todo
 
-- [ ] Collison between player and enemy should deduct score and also not allow overlap  
-- [ ] Adding A Better Hint System  
 - [ ] Allowing Users to write a function and execute  
+- [ ] Adding A Better Hint System  
 - [ ] Making the code editor better design  
 - [ ] Intgrating Timer to Level with better UI  
 - [ ] Making the Game UI better  
@@ -19,10 +18,11 @@ Project Description
 
 ### In Progress
 
-- [ ] Placing the Stars In an ideal places  
 
 ### Done ✓
 
+- [x] Collison between player and enemy should deduct score and also not allow overlap  
+- [x] Placing the Stars In an ideal places  
 - [x] Placing the Enemy In Ideal Location  
 - [x] Adding Overlap Detection Between Enemy And Bullet  
 
