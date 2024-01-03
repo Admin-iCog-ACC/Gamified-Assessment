@@ -2,15 +2,12 @@ export default class CountdownController {
   duration = 0;
   fontSize = 35; // Font size in pixels
 
-
   constructor(scene, label) {
-
-    
     this.scene = scene;
     this.label = label;
   }
 
-  start(callback, duration = 10000) {
+  start(callback, duration = 600000) {
     this.stop();
 
     this.finishedCallback = callback;
@@ -48,13 +45,12 @@ export default class CountdownController {
 
     this.label.text = seconds.toFixed(2);
 
-    this.label.setStyle({ 
-        fontSize: `${this.fontSize}px`,
-        position: 'absolute',
-        left: '50%',
-        top: '50%',
-        transform: 'translate(-50%, -50%)',
-      });
-
+    this.label.setStyle({
+      fontSize: `${this.fontSize}px`,
+      position: "absolute",
+      left: "70%",
+      top: "50%",
+      transform: "translate(-50%, -50%)",
+    });
   }
 }

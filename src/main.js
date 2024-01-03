@@ -185,12 +185,12 @@ class GameScene extends Phaser.Scene {
       frames: this.anims.generateFrameNumbers("mummy", { start: 0, end: 10 }),
       frameRate: 16,
     });
-    
+
     const sprite = this.add.sprite(50, 300, "mummy").setScale(1.2);
-    
-    sprite.play({ key: "walk", repeat: -1 });     
+
+    sprite.play({ key: "walk", repeat: -1 });
     const distanceToWalk = 50; // Adjust this value to determine the distance to walk
-    
+
     this.tweens.add({
       targets: sprite,
       x: sprite.x + distanceToWalk,
@@ -204,10 +204,10 @@ class GameScene extends Phaser.Scene {
     this.enemy3 = this.physics.add.sprite(450, 500, "mummy");
     this.enemy4 = this.physics.add.sprite(150, 100, "mummy");
 
-    this.enemy1.play({ key: "walk", repeat: -1 });    
-    this.enemy2.play({ key: "walk", repeat: -1 });     
-    this.enemy3.play({ key: "walk", repeat: -1 });     
-    this.enemy4.play({ key: "walk", repeat: -1 });     
+    this.enemy1.play({ key: "walk", repeat: -1 });
+    this.enemy2.play({ key: "walk", repeat: -1 });
+    this.enemy3.play({ key: "walk", repeat: -1 });
+    this.enemy4.play({ key: "walk", repeat: -1 });
 
     this.star1 = this.physics.add.sprite(750, 50, STAR_KEY);
     this.star2 = this.physics.add.sprite(750, 350, STAR_KEY);
@@ -348,7 +348,7 @@ class GameScene extends Phaser.Scene {
   addEvents() {
     // Clicking the mouse should fire a bullet
     this.input.on("pointerdown", (pointer) => {
-      this.fireBullet();
+      this.fireBulletRight();
     });
 
     // Firing bullets should also work on enter / spacebar press
@@ -358,14 +358,99 @@ class GameScene extends Phaser.Scene {
     ];
   }
 
-  fireBullet() {
-    this.laserGroup.fireBullet(this.player.x, this.player.y);
+  // fireBullet() {
+  //   this.laserGroup.fireBullet(this.player.x, this.player.y);
+  // }
+
+  righty(jumpCount = 1) {
+    if (this.player && this.player.body) {
+      var speed = 300;
+      var jumpDelay = 200; // Delay between each jump in milliseconds
+
+      // Recursive helper function to handle the jumps
+      const jump = (count) => {
+        if (count <= 0) {
+          return;
+        }
+
+        this.sound.play("right-left");
+        this.player.setVelocityX(speed);
+        this.player.anims.play("right", true);
+
+        setTimeout(() => {
+          this.player.setVelocityX(0);
+          jump(count - 1); // Call the jump function recursively with a decreased count
+        }, jumpDelay);
+      };
+
+      jump(jumpCount);
+    }
   }
 
-  fireBulletLeft() {
-    this.laserGroup.fireBulletLeft(this.player.x, this.player.y);
+  lefty(jumpCount = 1) {
+    if (this.player && this.player.body) {
+      var speed = -300;
+      var jumpDelay = 200; // Delay between each jump in milliseconds
+
+      // Recursive helper function to handle the jumps
+      const jump = (count) => {
+        if (count <= 0) {
+          return;
+        }
+
+        this.sound.play("right-left");
+        this.player.setVelocityX(speed);
+        this.player.anims.play("left", true);
+
+        setTimeout(() => {
+          this.player.setVelocityX(0);
+          jump(count - 1); // Call the jump function recursively with a decreased count
+        }, jumpDelay);
+      };
+
+      jump(jumpCount);
+    }
   }
 
+  fireBulletRight(bulletCount = 1) {
+    if (this.player && this.player.body) {
+      var fireDelay = 700; // Delay between each bullet fire in milliseconds
+
+      // Recursive helper function to handle firing the bullets
+      const fire = (count) => {
+        if (count <= 0) {
+          return;
+        }
+
+        this.laserGroup.fireBullet(this.player.x, this.player.y);
+        setTimeout(() => {
+          fire(count - 1); // Call the fire function recursively with a decreased count
+        }, fireDelay);
+      };
+
+      fire(bulletCount);
+    }
+  }
+
+  fireBulletLeft(bulletCount = 1) {
+    if (this.player && this.player.body) {
+      var fireDelay = 700; // Delay between each bullet fire in milliseconds
+
+      // Recursive helper function to handle firing the bullets
+      const fire = (count) => {
+        if (count <= 0) {
+          return;
+        }
+
+        this.laserGroup.fireBulletLeft(this.player.x, this.player.y);
+        setTimeout(() => {
+          fire(count - 1); // Call the fire function recursively with a decreased count
+        }, fireDelay);
+      };
+
+      fire(bulletCount);
+    }
+  }
   onButtonClick() {
     // Set the flag when the button is clicked
     this.isButtonClicked = true;
@@ -423,31 +508,36 @@ class GameScene extends Phaser.Scene {
 
       const executeAction = (action) => {
         console.log("Executing action:", action);
+
         const trimmedAction = action.trim();
-        if (trimmedAction === "player.shootRight()") {
-          this.fireBullet();
-        } else if (trimmedAction === "player.shootLeft") {
+
+        if (trimmedAction === "shootRight(3)") {
+          var newnumber = parseInt(trimmedAction.slice(11, -1)); // Extract the number from the string
+          this.fireBulletRight(newnumber);
+        } else if (trimmedAction === "shootLeft()") {
           this.fireBulletLeft();
-        } else if (trimmedAction === "player.right()") {
+        } else if (trimmedAction === "shootLeft()") {
+          this.fireBulletLeft();
+        } else if (trimmedAction === "right()") {
           this.righty();
-        } else if (trimmedAction === "player.right(2)") {
+        } else if (trimmedAction === "right(2)") {
           var number = trimmedAction[6];
           this.righty(number);
-        } else if (trimmedAction === "player.right(3)") {
+        } else if (trimmedAction === "right(3)") {
           var number = trimmedAction[6];
           this.righty(number);
-        } else if (trimmedAction === "player.left()") {
+        } else if (trimmedAction === "left()") {
           this.lefty();
-        } else if (trimmedAction === "player.left(2)") {
+        } else if (trimmedAction === "left(2)") {
           var number = trimmedAction[5];
           this.lefty(number);
-        } else if (trimmedAction === "player.left(3)") {
+        } else if (trimmedAction === "left(3)") {
           var number = trimmedAction[5];
           this.lefty(number);
-        } else if (trimmedAction === "player.left(4)") {
+        } else if (trimmedAction === "left(4)") {
           var number = trimmedAction[5];
           this.lefty(number);
-        } else if (trimmedAction === "player.jump()") {
+        } else if (trimmedAction === "jump()") {
           this.jump();
         } else {
           console.log("Unknown trimmedAction:", trimmedAction);
@@ -497,56 +587,6 @@ class GameScene extends Phaser.Scene {
 
         setTimeout(() => {
           this.player.setVelocityY(0);
-          jump(count - 1); // Call the jump function recursively with a decreased count
-        }, jumpDelay);
-      };
-
-      jump(jumpCount);
-    }
-  }
-
-  righty(jumpCount = 1) {
-    if (this.player && this.player.body) {
-      var speed = 300;
-      var jumpDelay = 200; // Delay between each jump in milliseconds
-
-      // Recursive helper function to handle the jumps
-      const jump = (count) => {
-        if (count <= 0) {
-          return;
-        }
-
-        this.sound.play("right-left");
-        this.player.setVelocityX(speed);
-        this.player.anims.play("right", true);
-
-        setTimeout(() => {
-          this.player.setVelocityX(0);
-          jump(count - 1); // Call the jump function recursively with a decreased count
-        }, jumpDelay);
-      };
-
-      jump(jumpCount);
-    }
-  }
-
-  lefty(jumpCount = 1) {
-    if (this.player && this.player.body) {
-      var speed = -300;
-      var jumpDelay = 200; // Delay between each jump in milliseconds
-
-      // Recursive helper function to handle the jumps
-      const jump = (count) => {
-        if (count <= 0) {
-          return;
-        }
-
-        this.sound.play("right-left");
-        this.player.setVelocityX(speed);
-        this.player.anims.play("left", true);
-
-        setTimeout(() => {
-          this.player.setVelocityX(0);
           jump(count - 1); // Call the jump function recursively with a decreased count
         }, jumpDelay);
       };
