@@ -506,43 +506,62 @@ class GameScene extends Phaser.Scene {
         }
       };
 
-      const executeAction = (action) => {
-        console.log("Executing action:", action);
+        const executeAction = (action) => {
+          console.log("Executing action:", action);
 
-        const trimmedAction = action.trim();
+          const trimmedAction = action.trim();
 
-        if (trimmedAction === "shootRight(3)") {
-          var newnumber = parseInt(trimmedAction.slice(11, -1)); // Extract the number from the string
-          this.fireBulletRight(newnumber);
-        } else if (trimmedAction === "shootLeft()") {
-          this.fireBulletLeft();
-        } else if (trimmedAction === "shootLeft()") {
-          this.fireBulletLeft();
-        } else if (trimmedAction === "right()") {
-          this.righty();
-        } else if (trimmedAction === "right(2)") {
-          var number = trimmedAction[6];
-          this.righty(number);
-        } else if (trimmedAction === "right(3)") {
-          var number = trimmedAction[6];
-          this.righty(number);
-        } else if (trimmedAction === "left()") {
-          this.lefty();
-        } else if (trimmedAction === "left(2)") {
-          var number = trimmedAction[5];
-          this.lefty(number);
-        } else if (trimmedAction === "left(3)") {
-          var number = trimmedAction[5];
-          this.lefty(number);
-        } else if (trimmedAction === "left(4)") {
-          var number = trimmedAction[5];
-          this.lefty(number);
-        } else if (trimmedAction === "jump()") {
-          this.jump();
-        } else {
-          console.log("Unknown trimmedAction:", trimmedAction);
-        }
-      };
+          const extractNumberFromAction = (action) => {
+            const match = action.match(/\((\d+)\)/);
+            if (match) {
+              return parseInt(match[1]);
+            }
+            return 1;
+          };
+          
+          const handleAction = (trimmedAction) => {
+            switch (trimmedAction) {
+              case "shootRight()":
+                this.fireBulletRight();
+                break;
+              case "shootLeft()":
+                this.fireBulletLeft();
+                break;
+              case "right()":
+                this.righty();
+                break;
+              case "left()":
+                this.lefty();
+                break;
+              case "jump()":
+                this.jump();
+                break;
+              default:
+                if (trimmedAction.startsWith("shootRight(")) {
+                  const number = extractNumberFromAction(trimmedAction);
+                  this.fireBulletRight(number);
+                } else if (trimmedAction.startsWith("shootLeft(")) {
+                  const number = extractNumberFromAction(trimmedAction);
+                  this.fireBulletLeft(number);
+                } else if (trimmedAction.startsWith("right(")) {
+                  const number = extractNumberFromAction(trimmedAction);
+                  this.righty(number);
+                } else if (trimmedAction.startsWith("left(")) {
+                  const number = extractNumberFromAction(trimmedAction);
+                  this.lefty(number);
+                } else if (trimmedAction.startsWith("jump(")) {
+                  const number = extractNumberFromAction(trimmedAction);
+                  this.jump(number);
+                } else {
+                  console.log("Unknown trimmedAction:", trimmedAction);
+                }
+                break;
+            }
+          };
+          
+          // Call the handleAction function with the trimmedAction value
+          handleAction(trimmedAction);
+        };
 
       const executeFunction = (functionBody) => {
         console.log("Executing function:", functionBody);
