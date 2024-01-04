@@ -92,7 +92,7 @@ canvas{
 
 
 #gameStartDiv{
-  display: none;
+  /* display: none; */
 }
 
 /* .overlay {

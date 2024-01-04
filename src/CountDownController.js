@@ -7,7 +7,7 @@ export default class CountdownController {
     this.label = label;
   }
 
-  start(callback, duration = 600000) {
+  start(callback, duration = 100000) {
     this.stop();
 
     this.finishedCallback = callback;
@@ -41,9 +41,10 @@ export default class CountdownController {
 
     const elapsed = this.timerEvent.getElapsed();
     const remaining = this.duration - elapsed;
-    const seconds = remaining / 1000;
-
-    this.label.text = seconds.toFixed(2);
+    const minutes = Math.floor(remaining / (1000 * 60));
+    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+    
+    this.label.text = `${minutes}:${seconds < 10 ? '0' : ''}${seconds.toFixed(0)}`;
 
     this.label.setStyle({
       fontSize: `${this.fontSize}px`,
@@ -51,6 +52,11 @@ export default class CountdownController {
       left: "70%",
       top: "50%",
       transform: "translate(-50%, -50%)",
+      backgroundColor: "black",
+      color: "white",
+      padding: "10px",
+      borderRadius: "5px",
+      boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
     });
   }
 }

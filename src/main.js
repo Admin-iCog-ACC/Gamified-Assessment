@@ -138,7 +138,7 @@ class GameScene extends Phaser.Scene {
   preload() {
     // this.scene.launch("StartMenu");
 
-    this.load.image("sky", "assets/space-pic.jpg");
+    this.load.image("sky", "assets/highland.jpg");
     this.load.image("GROUND_KEY", "assets/platform.png");
     this.load.image(STAR_KEY, "assets/star.png");
     this.load.image(BOMB_KEY, "assets/bomb.png");
@@ -238,22 +238,12 @@ class GameScene extends Phaser.Scene {
     this.addShip();
     this.addEvents();
 
-    // const timerLabel = this.add
-    //   .text(50, 50, "45", { fontSize: "48" })
-    //   .setOrigin(0.5);
+    const timerLabel = this.add
+      .text(400, 30, "45", { fontSize: "55" })
+      .setOrigin(0.5);
 
-    // this.countdown = new CountdownController(this, timerLabel);
-    // this.countdown.start(this.handleCountdownFinished.bind(this));
-
-    // this.physics.add.collider(
-    //   this.player,
-    //   bombsGroup,
-    //   this.hitBomb,
-    //   null,
-    //   this
-
-    //   // createTextEditorPage();
-    // );
+    this.countdown = new CountdownController(this, timerLabel);
+    this.countdown.start(this.handleCountdownFinished.bind(this));
 
     //  Overlap Detection
     this.laserGroup = new LaserGroup(this);
@@ -342,7 +332,7 @@ class GameScene extends Phaser.Scene {
   addShip() {
     const centerX = this.cameras.main.width;
     const bottom = this.cameras.main.height;
-    this.ship = this.add.image(centerX, bottom - 150, "ship");
+    this.ship = this.add.image(centerX, bottom  , "ship");
   }
 
   addEvents() {
@@ -587,7 +577,7 @@ class GameScene extends Phaser.Scene {
       this.isButtonClicked = false;
     }
 
-    // this.countdown.update();
+    this.countdown.update();
   }
 
   jump(jumpCount = 1) {
@@ -614,19 +604,7 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-  // Creating the Movement Functions
-  moveLeft() {
-    console.log("Left Working");
-    if (this.player) {
-      return this.player.setVelocityX(-800);
-    }
-  }
-
-  // Move right function
-  moveRight() {
-    this.player.setVelocityX(-160);
-    this.player.anims.play("right", true);
-  }
+ 
 
   // Creating the Ground Platform
   createPlatforms() {
@@ -642,22 +620,7 @@ class GameScene extends Phaser.Scene {
     return platforms;
   }
 
-  // createStars() {
-  //   const stars = this.physics.add.group({
-  //     key: STAR_KEY,
-  //     repeat: 6,
-  //     setXY: { x: 12, y: 0, stepX: 70 },
-  //   });
-
-  //   stars.children.iterate((c) => {
-  //     // Creating the Bounce Property when the Stars are created
-  //     // @ts-ignore
-  //     const child = /**@type {Phaser.Physics.Arcade.Sprite} */ (c);
-  //     child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.6));
-  //   });
-
-  //   return stars;
-  // }
+  
 
   // When collecting stars the Stars should be removed from the screen
   // @ts-ignore
@@ -665,11 +628,11 @@ class GameScene extends Phaser.Scene {
     this.sound.play("collectstar");
 
     star.disableBody(true, true);
-    this.scoreLabel.add(1000);
+    this.scoreLabel.add(100);
 
-    // if (this.stars.countActive(true) === 0) {
-    //   this.scene.start("game-over", { title: "  You Won ! " });
-    // }
+    if (this.stars.countActive(true) === 0) {
+      this.scene.start("game-over", { title: "  You Won ! " });
+    }
 
     // this.bombSpawner.spawn(player.x);
   }
@@ -677,12 +640,12 @@ class GameScene extends Phaser.Scene {
   collectEnemy(laser, enemy3) {
     console.log("Bullet - Enemy Collision Working");
     this.sound.play("collectstar");
-    this.scoreLabel.add(2000);
+    this.scoreLabel.add(50);
     enemy3.disableBody(true, true);
   }
 
   deductPoints(laser, enemy3) {
-    this.scoreLabel.add(-500);
+    this.scoreLabel.add(-50);
     this.player.setPosition(100, 400);
   }
 
@@ -690,7 +653,7 @@ class GameScene extends Phaser.Scene {
 
   // Creating the Score Label
   createScoreLabel(x, y, score) {
-    const style = { fontSize: "32px", fill: "#000" };
+    const style = { fontSize: "40px", fill: "#fff" };
     const label = new ScoreLabel(this, x, y, score, style);
 
     // @ts-ignore
