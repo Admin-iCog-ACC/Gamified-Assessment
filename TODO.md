@@ -7,21 +7,21 @@ Project Description
 ### Todo
 
 - [ ] Time Finished Scene UI  
-- [ ] Allowing Users to write a function and execute  
 - [ ] Making the Gameover Scene Better  
-- [ ] Intgrating Timer to Level with better UI  
-- [ ] Making the code editor better design  
 - [ ] Adding A Better Hint System  
 - [ ] Making the Game UI better  
-- [ ] Start Game UI  
 
 ### In Progress
 
+- [ ] Start Game UI  
+- [ ] Allowing Users to write a function and execute  
 - [ ] Overall Voice system  
-- [ ] Start Game Hiding the game and On click Appearing  
 
 ### Done ✓
 
+- [x] Intgrating Timer to Level with better UI  
+- [x] Start Game Hiding the game and On click Appearing  
+- [x] Making the code editor better design  
 - [x] Collison between player and enemy should deduct score and also not allow overlap  
 - [x] Placing the Stars In an ideal places  
 - [x] Placing the Enemy In Ideal Location  

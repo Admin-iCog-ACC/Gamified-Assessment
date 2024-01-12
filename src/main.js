@@ -200,7 +200,7 @@ class GameScene extends Phaser.Scene {
 
     // Create the enemy sprite
     this.enemy1 = this.physics.add.sprite(700, 100, "mummy");
-    this.enemy2 = this.physics.add.sprite(700, 350, "mummy");
+    this.enemy2 = this.physics.add.sprite(500, 350, "mummy");
     this.enemy3 = this.physics.add.sprite(450, 500, "mummy");
     this.enemy4 = this.physics.add.sprite(150, 100, "mummy");
 
@@ -213,6 +213,7 @@ class GameScene extends Phaser.Scene {
     this.star2 = this.physics.add.sprite(750, 350, STAR_KEY);
     this.star3 = this.physics.add.sprite(600, 400, STAR_KEY);
     this.star4 = this.physics.add.sprite(50, 100, STAR_KEY);
+    this.star5 = this.physics.add.sprite(460,350,STAR_KEY)
 
     this.bombSpawner = new BombSpawner(this, BOMB_KEY);
     const bombsGroup = this.bombSpawner.group;
@@ -231,6 +232,7 @@ class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.star2, platforms);
     this.physics.add.collider(this.star3, platforms);
     this.physics.add.collider(this.star4, platforms);
+    
 
     // Create Shooting Part
     this.laserGroup = new LaserGroup(this);
@@ -309,25 +311,47 @@ class GameScene extends Phaser.Scene {
     // // Add button click event listener
   }
 
+
   handleCountdownFinished() {
     this.player.active = false;
     this.player.setVelocity(0, 0);
-
+  
     const { width, height } = this.scale;
-
-    this.add.rectangle(width * 0.5, height * 0.5, 400, 400, 0xffffff);
-
-    const newFontSize = 48 * 5;
-
-    // this.add
-    //   // @ts-ignore
-    //   .text(width * 0.5, height * 0.5, "You Lose!")
-    //   .setOrigin(0.5);
-
-    this.add
-      .text(width * 0.5, height * 0.5, "You Lose!", { fontSize: "48" })
+  
+    const rect = this.add.rectangle(width * 0.5, height * 0.5, 400, 400, 0xffffff);
+  
+    const newFontSize = 48;
+  
+    const text = this.add
+      .text(rect.x, rect.y, "Time Finished.", { 
+        fontSize: `${newFontSize}px`,
+        color: "#000000" // Set the font color to black
+      })
       .setOrigin(0.5);
+  
+    // Adjust the position of the text within the rectangle
+    text.setPosition(rect.x, rect.y);
   }
+
+  // handleCountdownFinished() {
+  //   this.player.active = false;
+  //   this.player.setVelocity(0, 0);
+
+  //   const { width, height } = this.scale;
+
+  //   this.add.rectangle(width * 0.5, height * 0.5, 400, 400, 0xffffff);
+
+  //   const newFontSize = 48 * 5;
+
+  //   this.add
+  //     // @ts-ignore
+  //     .text(width * 0.5, height * 0.5, "You Lose!")
+  //     .setOrigin(0.5);
+
+  //   this.add
+  //     .text(width * 0.5, height * 0.5, "You Lose!", { fontSize: "48" })
+  //     .setOrigin(0.5);
+  // }
 
   addShip() {
     const centerX = this.cameras.main.width;
@@ -461,40 +485,40 @@ class GameScene extends Phaser.Scene {
       const functionCall = retrievedDataArray[lenArray - 1];
       const firstElement = retrievedDataArray[0];
 
-      const processNextElement = () => {
-        if (index < retrievedDataArray.length) {
-          const currentString = retrievedDataArray[index];
-          console.log("Processing:", currentString);
+        const processNextElement = () => {
+          if (index < retrievedDataArray.length) {
+            const currentString = retrievedDataArray[index];
+            console.log("Processing:", currentString);
 
-          if (currentString.startsWith("def")) {
-            // User-defined function
-            const functionName = currentString.substring(4).trim();
-            const functionIndex = lenArray - 1;
+            if (currentString.startsWith("def")) {
+              // User-defined function
+              const functionName = currentString.substring(4).trim();
+              const functionIndex = lenArray - 1;
 
-            if (functionIndex !== -1) {
-              const functionBody = retrievedDataArray.slice(
-                index + 1,
-                functionIndex
-              );
-              executeFunction(functionBody);
-              index = functionIndex + 1;
+              if (functionIndex !== -1) {
+                const functionBody = retrievedDataArray.slice(
+                  index + 1,
+                  functionIndex
+                );
+                executeFunction(functionBody);
+                index = functionIndex + 1;
+              } else {
+                console.log(`Function enddef ${functionName} not found.`);
+              }
             } else {
-              console.log(`Function enddef ${functionName} not found.`);
+              // Single action
+              executeAction(currentString);
+              index++;
             }
-          } else {
-            // Single action
-            executeAction(currentString);
-            index++;
-          }
 
-          setTimeout(processNextElement, 1000);
-        } else {
-          console.log("All elements processed");
-          retrievedDataString = "";
-          retrievedDataArray = [];
-          this.isButtonClicked = false;
-        }
-      };
+            setTimeout(processNextElement, 1000);
+          } else {
+            console.log("All elements processed");
+            retrievedDataString = "";
+            retrievedDataArray = [];
+            this.isButtonClicked = false;
+          }
+        };
 
         const executeAction = (action) => {
           console.log("Executing action:", action);
@@ -620,8 +644,6 @@ class GameScene extends Phaser.Scene {
     return platforms;
   }
 
-  
-
   // When collecting stars the Stars should be removed from the screen
   // @ts-ignore
   collectStar(player, star) {
@@ -630,11 +652,11 @@ class GameScene extends Phaser.Scene {
     star.disableBody(true, true);
     this.scoreLabel.add(100);
 
-    if (this.stars.countActive(true) === 0) {
-      this.scene.start("game-over", { title: "  You Won ! " });
-    }
+    // if (this.stars.countActive(true) === 0) {
+    //   this.scene.start("game-over", { title: "  You Won ! " });
+    // }
 
-    // this.bombSpawner.spawn(player.x);
+    // this.bmbSpawner.spawn(player.x);o
   }
 
   collectEnemy(laser, enemy3) {
@@ -733,15 +755,16 @@ function createTextEditorPage() {
   button.style.width = "15%";
   button.style.position = "absolute";
   button.style.backgroundColor = "slate";
-  button.style.bottom = "0";
-  button.style.marginBottom = "3rem";
-  button.style.marginRight = "3rem";
+  button.style.bottom = "215px";
+  button.style.marginBottom = "1rem";
+  button.style.marginRight = "1rem";
 
-  button.style.right = "0";
-  button.style.height = "4rem";
-  button.style.marginTop = "4rem";
+  button.style.right = "150px";
+  button.style.height = "3rem";
+  button.style.marginTop = "1rem";
   button.onclick = runCode;
   button.id = "runButton"; // Add the id attribute
+  button.className="runButtonClass"
   document.body.appendChild(button);
 
   // Creating an instance of the GameScene and interacting with the game

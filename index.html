@@ -9,9 +9,10 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/xml/xml.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/theme/dracula.min.css" />
 	<link rel="stylesheet" href="styles.css">
-	<link rel="stylesheet" href="https://unpkg.com/intro.js/introjs.css" />
+	<script src="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/js/shepherd.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@10.0.1/dist/css/shepherd.css" />
 
-	<title>My Phaser 3 Game</title>
+	<title>Aster's Code Quest</title>
 </head>
 
 <body>
@@ -20,10 +21,10 @@
 
 	<!-- <main id="gameCanvas"> -->
 	<canvas class="gameCanvas"></canvas>
-	<div id="gameStartDiv" class="gameUI">
+	<div id="gameStartDiv" class="gameUI overlay" style="background-image: url('/assets/highland.jpg');">
 		<h1 class="" style="color: white;">Star Collector</h1>
 		<p style="color: white;">Collect all the Stars using the Code Provided Below.</p>
-		<h1> USE THE FOLLOWING PREDEFINED METHODS TO COLLECT ALL THE STARS </h1>
+		<h1 style="color: white;"> USE THE FOLLOWING PREDEFINED METHODS TO COLLECT ALL THE STARS </h1>
 		<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
 			<h5 style="background-color: lightgray; padding: 10px; margin: 0;">Left <span style="font-size: 12px;">To
 					Move Left</span></h5>
@@ -39,7 +40,7 @@
 					Move Jump 4 times</span></h5>
 		</div>
 
-		<button id="gameStartBtn">
+		<button class="gameStartButton" id="gameStartBtn">
 			<p>Start Game</p>
 		</button>
 	</div>
@@ -51,6 +52,7 @@
 	</div>
 	</div>
 	<!-- </main> -->
+
 
 	<script>
 		document.getElementById("gameStartBtn").addEventListener("click", function () {
@@ -71,61 +73,315 @@
 		});
 	</script>
 
-	<!-- <main id="gameCanvas">
-	<canvas id="gameCanvas"></canvas>
-	<div id=" gameStartDiv" class="overlay  ">
-		<h1 class="center-element" style="color: black;">Star Collector</h1>
-		<h3 style="color: black;" class="center-element">Collect all the Starts while avoiding Enemies.</h3>
-		<h1 class="center-element" class="center-element"> Test your Python Skills with Star Collector Game. </h1>
-
-		<button id="gameStartBtn" class="center-element">
-			<p>Start Game</p>
-		</button>
-	</div>
-	<div id="gameEndDiv" class="gameUI">
-		<p>Game Over</p>
-		<h1>You <span id="gameWinLoseSpan"></span></h1>
-		<h1>Final Score: <span id="gameEndScoreSpan"></span></h1>
-		<p>Refresh the Page to play again</p>
-	</div>
-	</div>
-	 
-
-	<script>
-		document.getElementById("gameStartBtn").addEventListener("click", function () {
-
-			document.getElementById("gameStartBtn").addEventListener("click", function () {
-				var codeMirrorElement = document.querySelector(".CodeMirror");
-				if (codeMirrorElement) {
-					codeMirrorElement.style.display = "block";
-				}
-			});
-
-			// Hide the body startingScreen
-			// var startingScreen = document.querySelector("startingScreen");
-			// startingScreen.style.display = "none";
-
-			// Show the canvas, code editor, and run button
-			// codeMirrorElement.style.display = "block";
-			// newGameCanvas.style.display = "block";
-			// runButton.style.display = "block";
-
-			// // Hide the game start div
-			// gameStartDiv.style.display = "none";
-			// var codeMirrorElement = document.querySelector(".CodeMirror");
-			// var newGameCanvas = document.querySelector("canvas");
-			// var startButton = document.querySelector("#gameStartBtn");
-			// var gameStartDiv = document.querySelector("#gameStartBtn");
-
-			// codeMirrorElement.style.display = "block";
-			// newGameCanvas.style.display = "block";
-			// startButton.style.display = "block";
-			// gameStartDiv.style.display = "none";
 
 
-		});
-	</script> -->
 
+<!-- TOUR SECTION -->
+<script>
+	const tour = new Shepherd.Tour({
+  useModalOverlay: true,
+  defaultStepOptions: {
+    classes: 'shadow-md bg-purple-dark',
+    scrollTo: true
+  }
+});
+
+tour.addStep({
+  id: 'gameStartDiv',
+  text: 'Click the start game Above. ',
+  attachTo: {
+    element: '.gameStartButton',
+    on: 'bottom'
+  },
+  classes: 'example-step-extra-class',
+});
+
+tour.start();
+
+const newTour = new Shepherd.Tour({
+  useModalOverlay: true,
+  defaultStepOptions: {
+    classes: 'shadow-md bg-purple-dark',
+    scrollTo: true,
+    buttons: [
+      {
+        text: 'Next',
+        action: function() {
+          newTour.next();
+        }
+      }
+    ]
+  }
+});
+
+newTour.addStep({
+  id: 'CodeMirror-sizer',
+  text: 'Click on Copy Button and paste it into your code editor:  <span style="font-size: 18px; font-weight: bold; color: red;">right()</span>  ',
+  attachTo: {
+    element: '.CodeMirror-sizer',
+    on: 'left',
+    verticalAlign: 'bottom' // Adjust the vertical alignment to 'top'
+  },
+  classes: 'example-step-extra-class',
+  buttons: [
+    {
+      text: 'Copy',
+      action: function() {
+        const codeToCopy = 'right()';
+        navigator.clipboard.writeText(codeToCopy)
+          .then(function() {
+            newTour.next();
+          })
+          .catch(function(error) {
+            console.error('Error copying code:', error);
+          });
+      }
+    }
+  ]
+});
+
+newTour.addStep({
+  id: 'code-editor',
+  text: 'Now, paste the code into your code editor and Click the Run Code Button!',
+  attachTo: {
+    element: '.CodeMirror-sizer',
+    on: 'bottom'
+  }
+});
+
+
+const shootRightTour = new Shepherd.Tour({
+  useModalOverlay: true,
+  defaultStepOptions: {
+    classes: 'shadow-md bg-purple-dark',
+    scrollTo: true,
+    buttons: [
+      {
+        text: 'Next',
+        action: function() {
+          shootRightTour.next();
+        }
+      }
+    ]
+  }
+});
+
+shootRightTour.addStep({
+  id: 'CodeMirror-sizer',
+  text: 'Click on Copy Button and paste it into your code editor:  <span style="font-size: 18px; font-weight: bold; color: red;">shootRight()</span>  ',
+  attachTo: {
+    element: '.CodeMirror-sizer',
+    on: 'left',
+    verticalAlign: 'bottom' // Adjust the vertical alignment to 'top'
+  },
+  classes: 'example-step-extra-class',
+  buttons: [
+    {
+      text: 'Copy',
+      action: function() {
+        const codeToCopy = 'shootRight()';
+        navigator.clipboard.writeText(codeToCopy)
+          .then(function() {
+            shootRightTour.next();
+          })
+          .catch(function(error) {
+            console.error('Error copying code:', error);
+          });
+      }
+    }
+  ]
+});
+
+shootRightTour.addStep({
+  id: 'code-editor',
+  text: 'Now, paste the code into your code editor and Click the Run Code Button!',
+  attachTo: {
+    element: '.CodeMirror-sizer',
+    on: 'bottom'
+  }
+});
+
+const moveRightwithSteps = new Shepherd.Tour({
+  useModalOverlay: true,
+  defaultStepOptions: {
+    classes: 'shadow-md bg-purple-dark',
+    scrollTo: true,
+    buttons: [
+      {
+        text: 'Next',
+        action: function() {
+          moveRightwithSteps.next();
+        }
+      }
+    ]
+  }
+});
+
+moveRightwithSteps.addStep({
+  id: 'CodeMirror-sizer',
+  text: 'Click on Copy Button and paste it into your code editor:  <span style="font-size: 18px; font-weight: bold; color: red;">moveRight(7)</span>  ',
+  attachTo: {
+    element: '.CodeMirror-sizer',
+    on: 'left',
+    verticalAlign: 'bottom' // Adjust the vertical alignment to 'top'
+  },
+  classes: 'example-step-extra-class',
+  buttons: [
+    {
+      text: 'Copy',
+      action: function() {
+        const codeToCopy = 'right(7)';
+        navigator.clipboard.writeText(codeToCopy)
+          .then(function() {
+            moveRightwithSteps.next();
+          })
+          .catch(function(error) {
+            console.error('Error copying code:', error);
+          });
+      }
+    }
+  ]
+});
+
+moveRightwithSteps.addStep({
+  id: 'code-editor',
+  text: 'Now, paste the code into your code editor and Click the Run Code Button!',
+  attachTo: {
+    element: '.CodeMirror-sizer',
+    on: 'bottom'
+  }
+});
+
+const moveLeftwithSteps = new Shepherd.Tour({
+  useModalOverlay: true,
+  defaultStepOptions: {
+    classes: 'shadow-md bg-purple-dark',
+    scrollTo: true,
+    buttons: [
+      {
+        text: 'Next',
+        action: function() {
+          moveLeftwithSteps.next();
+        }
+      }
+    ]
+  }
+});
+
+moveLeftwithSteps.addStep({
+  id: 'CodeMirror-sizer',
+  text: 'Click on Copy Button and paste it into your code editor:  <span style="font-size: 18px; font-weight: bold; color: red;">left(5)</span>  ',
+  attachTo: {
+    element: '.CodeMirror-sizer',
+    on: 'left',
+    verticalAlign: 'bottom' // Adjust the vertical alignment to 'top'
+  },
+  classes: 'example-step-extra-class',
+  buttons: [
+    {
+      text: 'Copy',
+      action: function() {
+        const codeToCopy = 'left(5)';
+        navigator.clipboard.writeText(codeToCopy)
+          .then(function() {
+            moveLeftwithSteps.next();
+          })
+          .catch(function(error) {
+            console.error('Error copying code:', error);
+          });
+      }
+    }
+  ]
+});
+
+const jumpwithsteps = new Shepherd.Tour({
+  useModalOverlay: true,
+  defaultStepOptions: {
+    classes: 'shadow-md bg-purple-dark',
+    scrollTo: true,
+    buttons: [
+      {
+        text: 'Next',
+        action: function() {
+          jumpwithsteps.next();
+        }
+      }
+    ]
+  }
+});
+
+jumpwithsteps.addStep({
+  id: 'CodeMirror-sizer',
+  text: 'Click on Copy Button and paste it into your code editor: <span style="font-size: 18px; font-weight: bold; color: red;">jump(4)</span>',
+  attachTo: {
+    element: '.CodeMirror-sizer',
+    on: 'left',
+    verticalAlign: 'bottom' // Adjust the vertical alignment to 'top'
+  },
+  classes: 'example-step-extra-class',
+  buttons: [
+    {
+      text: 'Copy',
+      action: function() {
+        const codeToCopy = 'jump(4)';
+        navigator.clipboard.writeText(codeToCopy)
+          .then(function() {
+            jumpwithsteps.next();
+          })
+          .catch(function(error) {
+            console.error('Error copying code:', error);
+          });
+      }
+    }
+  ]
+});
+
+document.getElementById('gameStartBtn').addEventListener('click', function() {
+  tour.complete(); // Complete the current tour
+  newTour.start(); // Start the new tour
+});
+
+document.getElementById('CodeMirror').addEventListener('click', function() {
+  newTour.cancel(); // Start the new tour
+});
+
+var domButton = document.getElementById("runButton");
+    domButton.addEventListener("click", function () {
+      // Trigger the game button when the DOM button is clicked
+      console.log("first")
+    });
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const runButton = document.querySelector('#runButton');
+	  let clickCount = 0;
+
+      runButton.addEventListener('click', function() {
+		clickCount++;
+
+		if (clickCount === 1) {
+          // Start the shootRightTour on the first button click
+          shootRightTour.start();
+        } else if (clickCount === 2) {
+          // Stop the shootRightTour and start the moverightwithSteps on the second button click
+          shootRightTour.cancel();
+          moveRightwithSteps.start();
+        } else if(clickCount === 3 ){
+			moveRightwithSteps.cancel()
+			moveLeftwithSteps.start()
+		}
+		else if(clickCount === 4 ){
+			moveRightwithSteps.cancel()
+			jumpwithsteps.start()
+		}
+		
+      });
+    });
+
+	
+  </script>
 
 
 	<div id="app">
@@ -135,7 +391,6 @@
 		body {
 			margin: 0;
 			padding: 0;
-			background-image: url("/public/assets/highland.jpg");
 			background-size: cover;
 			background-position: center;
 			background-position: center;
@@ -147,6 +402,7 @@
 			align-items: center;
 			justify-content: center;
 			overflow: hidden;
+			background-image: url('/assets/highland.jpg');
 		}
 
 		.center-element {
@@ -157,15 +413,13 @@
 
 		.overlay {
 			background-color: rgba(255, 255, 255, 0.7);
-			max-width: 650px;
-			margin: 50px auto;
 		}
 
 		canvas {
-			height: 85%;
+			height: 90%;
 			width: 60%;
 			margin-left: 20px;
-			margin-top:  0px;
+			margin-top: 0px;
 			position: absolute;
 			top: 10;
 			left: 0;
@@ -173,8 +427,17 @@
 			/* display: none; */
 		}
 
+		.hints_section{
+			height: 50%;
+			width: 35%;
+			margin: 1.5;
+			position: absolute;
+			top: 0;
+			right: 0;
+		}
+
 		.CodeMirror {
-			height: 85%;
+			height: 55%;
 			/* Adjust the height as needed */
 			width: 35%;
 			margin: 1.5rem;
@@ -190,7 +453,7 @@
 		}
 	</style>
 	<script type="module" src="src/main.js"></script>
-	<script src="https://unpkg.com/intro.js/intro.js"></script>
+
 
 
 </body>
