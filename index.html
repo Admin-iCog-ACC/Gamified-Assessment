@@ -114,9 +114,11 @@ const newTour = new Shepherd.Tour({
   }
 });
 
+
+
 newTour.addStep({
   id: 'CodeMirror-sizer',
-  text: 'Click on Copy Button and paste it into your code editor:  <span style="font-size: 18px; font-weight: bold; color: red;">right()</span>  ',
+  text: 'Click on Copy Button and paste it into the code editor:  <span style="font-size: 18px; font-weight: bold; color: red;">right()</span>  ',
   attachTo: {
     element: '.CodeMirror-sizer',
     on: 'left',
@@ -142,7 +144,7 @@ newTour.addStep({
 
 newTour.addStep({
   id: 'code-editor',
-  text: 'Now, paste the code into your code editor and Click the Run Code Button!',
+  text: 'Now, paste the code into the code editor and Click the Run Code Button!',
   attachTo: {
     element: '.CodeMirror-sizer',
     on: 'bottom'
@@ -168,7 +170,7 @@ const shootRightTour = new Shepherd.Tour({
 
 shootRightTour.addStep({
   id: 'CodeMirror-sizer',
-  text: 'Click on Copy Button and paste it into your code editor:  <span style="font-size: 18px; font-weight: bold; color: red;">shootRight()</span>  ',
+  text: 'Click on Copy Button and paste it into the code editor:  <span style="font-size: 18px; font-weight: bold; color: red;">shootRight()</span>  ',
   attachTo: {
     element: '.CodeMirror-sizer',
     on: 'left',
@@ -194,7 +196,7 @@ shootRightTour.addStep({
 
 shootRightTour.addStep({
   id: 'code-editor',
-  text: 'Now, paste the code into your code editor and Click the Run Code Button!',
+  text: 'Now, paste the code into the code editor and Click the Run Code Button!',
   attachTo: {
     element: '.CodeMirror-sizer',
     on: 'bottom'
@@ -219,7 +221,7 @@ const moveRightwithSteps = new Shepherd.Tour({
 
 moveRightwithSteps.addStep({
   id: 'CodeMirror-sizer',
-  text: 'Click on Copy Button and paste it into your code editor:  <span style="font-size: 18px; font-weight: bold; color: red;">moveRight(7)</span>  ',
+  text: 'Click on Copy Button and paste it into the code editor:  <span style="font-size: 18px; font-weight: bold; color: red;">moveRight(6)</span>  ',
   attachTo: {
     element: '.CodeMirror-sizer',
     on: 'left',
@@ -230,7 +232,7 @@ moveRightwithSteps.addStep({
     {
       text: 'Copy',
       action: function() {
-        const codeToCopy = 'right(7)';
+        const codeToCopy = 'right(6)';
         navigator.clipboard.writeText(codeToCopy)
           .then(function() {
             moveRightwithSteps.next();
@@ -245,10 +247,10 @@ moveRightwithSteps.addStep({
 
 moveRightwithSteps.addStep({
   id: 'code-editor',
-  text: 'Now, paste the code into your code editor and Click the Run Code Button!',
+  text: 'Now, paste the code into the code editor and Click the Run Code Button!',
   attachTo: {
     element: '.CodeMirror-sizer',
-    on: 'bottom'
+    on: 'left'
   }
 });
 
@@ -270,7 +272,7 @@ const moveLeftwithSteps = new Shepherd.Tour({
 
 moveLeftwithSteps.addStep({
   id: 'CodeMirror-sizer',
-  text: 'Click on Copy Button and paste it into your code editor:  <span style="font-size: 18px; font-weight: bold; color: red;">left(5)</span>  ',
+  text: 'Click on Copy Button and paste it into the code editor:  <span style="font-size: 18px; font-weight: bold; color: red;">left(4)</span>  ',
   attachTo: {
     element: '.CodeMirror-sizer',
     on: 'left',
@@ -281,7 +283,7 @@ moveLeftwithSteps.addStep({
     {
       text: 'Copy',
       action: function() {
-        const codeToCopy = 'left(5)';
+        const codeToCopy = 'left(4)';
         navigator.clipboard.writeText(codeToCopy)
           .then(function() {
             moveLeftwithSteps.next();
@@ -292,6 +294,15 @@ moveLeftwithSteps.addStep({
       }
     }
   ]
+});
+
+moveLeftwithSteps.addStep({
+  id: 'code-editor',
+  text: 'Now, paste the code into the code editor and Click the Run Code Button!',
+  attachTo: {
+    element: '.CodeMirror-sizer',
+    on: 'left'
+  }
 });
 
 const jumpwithsteps = new Shepherd.Tour({
@@ -312,7 +323,7 @@ const jumpwithsteps = new Shepherd.Tour({
 
 jumpwithsteps.addStep({
   id: 'CodeMirror-sizer',
-  text: 'Click on Copy Button and paste it into your code editor: <span style="font-size: 18px; font-weight: bold; color: red;">jump(4)</span>',
+  text: 'Click on Copy Button and paste it into the code editor: <span style="font-size: 18px; font-weight: bold; color: red;">jump(5)right(1)</span>',
   attachTo: {
     element: '.CodeMirror-sizer',
     on: 'left',
@@ -323,10 +334,61 @@ jumpwithsteps.addStep({
     {
       text: 'Copy',
       action: function() {
-        const codeToCopy = 'jump(4)';
+		const codeToCopy = 'jump(5)right(1)'.replace(/(\))/g, '$1\n');
         navigator.clipboard.writeText(codeToCopy)
           .then(function() {
             jumpwithsteps.next();
+          })
+          .catch(function(error) {
+            console.error('Error copying code:', error);
+          });
+      }
+    }
+  ]
+});
+
+jumpwithsteps.addStep({
+  id: 'code-editor',
+  text: 'Now, paste the code into the code editor and Click the Run Code Button!',
+  attachTo: {
+    element: '.CodeMirror-sizer',
+    on: 'left'
+  }
+});
+
+const multipleLineCode = new Shepherd.Tour({
+  useModalOverlay: true,
+  defaultStepOptions: {
+    classes: 'shadow-md bg-purple-dark',
+    scrollTo: true,
+    buttons: [
+      {
+        text: 'Next',
+        action: function() {
+          jumpwithsteps.next();
+        }
+      }
+    ]
+  }
+});
+
+multipleLineCode.addStep({
+  id: 'CodeMirror-sizer',
+  text: 'Click on Copy Button and paste it into the code editor: <span style="font-size: 18px; font-weight: bold; color: red;">right()jump(5)shootRight()</span>',
+  attachTo: {
+    element: '.CodeMirror-sizer',
+    on: 'left',
+    verticalAlign: 'bottom' // Adjust the vertical alignment to 'top'
+  },
+  classes: 'example-step-extra-class',
+  buttons: [
+    {
+      text: 'Copy',
+      action: function() {
+        const codeToCopy = 'shootRight()right(9)jump(5)'.replace(/(\))/g, '$1\n');
+        navigator.clipboard.writeText(codeToCopy)
+          .then(function() {
+            newTour.next();
           })
           .catch(function(error) {
             console.error('Error copying code:', error);
@@ -375,6 +437,10 @@ var domButton = document.getElementById("runButton");
 		else if(clickCount === 4 ){
 			moveRightwithSteps.cancel()
 			jumpwithsteps.start()
+		}
+		else if(clickCount === 5 ){
+			jumpwithsteps.cancel()
+			multipleLineCode.start()
 		}
 		
       });
